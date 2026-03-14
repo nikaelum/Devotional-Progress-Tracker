@@ -925,61 +925,45 @@ function useVotd(){
   if(target)target.textContent=card.dataset.text;updateWordCount();showToast('Verse loaded into your entry!','success');
 }
 
-// ===== FETCH SCRIPTURE — 3 VERSIONS =====
+// ===== FETCH SCRIPTURE & CONTEXT VIA AI =====
 async function fetchScripture(){
   const ref=document.getElementById('entryRef').value.trim();
   if(!ref){showToast('Please enter a scripture reference first','error');return}
+  
   const btn=document.getElementById('fetchBtn');
-  btn.disabled=true;btn.innerHTML='<span class="spin">⏳</span> Fetching...';
-  fetchedVersions={};
+  btn.disabled=true;
+  btn.innerHTML='<span class="spin">⏳</span> Asking AI...';
 
-  document.querySelectorAll('.ver-tab').forEach(t=>{t.classList.remove('ver-error');t.classList.add('ver-loading');
-    const st=t.querySelector('.ver-status');if(st)st.remove();
-  });
+  try {
+    // 1. Call your secure Vercel API
+    const response = await fetch(`/api/get-scripture?ref=${encodeURIComponent(ref)}`);
+    if (!response.ok) throw new Error("API Network Error");
+    const data = await response.json();
 
-  const versionKeys=Object.keys(BIBLE_VERSIONS);
-  const promises=versionKeys.map(async(ver)=>{
-    try{
-      const apiParam=BIBLE_VERSIONS[ver].apiParam;
-      const response=await fetch(`https://bible-api.com/${encodeURIComponent(ref)}?translation=${apiParam}`);
-      if(!response.ok)throw new Error('Not found');
-      const data=await response.json();
-      if(data&&data.text){
-        fetchedVersions[ver]={text:data.text.trim(),reference:data.reference||ref};
-      }else throw new Error('No text');
-    }catch(err){fetchedVersions[ver]=null}
-  });
+    // 2. Put the scripture in the main text box (handles SOAP, HEAR, or Free mode)
+    const target = document.getElementById('field_scripture') || document.getElementById('field_highlight') || document.getElementById('field_freewrite');
+    if(target) target.innerHTML = data.text;
 
-  await Promise.all(promises);
-
-  versionKeys.forEach(ver=>{
-    const tab=document.querySelector(`.ver-tab[data-ver="${ver}"]`);
-    if(tab){
-      tab.classList.remove('ver-loading');
-      if(fetchedVersions[ver]){
-        let st=tab.querySelector('.ver-status');if(!st){st=document.createElement('span');st.className='ver-status';tab.appendChild(st)}
-        st.textContent='✅';
-      }else{
-        tab.classList.add('ver-error');
-        let st=tab.querySelector('.ver-status');if(!st){st=document.createElement('span');st.className='ver-status';tab.appendChild(st)}
-        st.textContent='❌';
-      }
+    // 3. Put the AI's Historical Context into the "Additional Notes" box
+    const notesBox = document.getElementById('field_notes');
+    if(notesBox) {
+        notesBox.innerHTML = `<strong>Historical Context:</strong><br>${data.context}`;
     }
-  });
 
-  const successCount=Object.values(fetchedVersions).filter(v=>v).length;
-  if(successCount>0){
-    const first=Object.values(fetchedVersions).find(v=>v);
-    if(first&&first.reference)document.getElementById('entryRef').value=first.reference;
-    activeVer=versionKeys.find(v=>fetchedVersions[v])||'kjv';
-    document.getElementById('verPanel').style.display='block';
-    showVer(activeVer,document.querySelector(`.ver-tab[data-ver="${activeVer}"]`));
-    showToast(`✅ Fetched ${successCount} of ${versionKeys.length} translations!`,'success');
-  }else{
-    showToast('Could not fetch scripture. Check your reference or type it manually.','error');
+    // 4. Clean up the reference input
+    document.getElementById('entryRef').value = data.reference;
+    
+    // Hide the old version comparison panel since we bypass it now
     document.getElementById('verPanel').style.display='none';
+    
+    showToast('✨ Scripture & Context loaded!', 'success');
+  } catch (error) {
+    showToast('❌ Could not connect to AI', 'error');
+    console.error(error);
+  } finally {
+    btn.disabled=false;
+    btn.innerHTML='📥 Fetch';
   }
-  btn.disabled=false;btn.innerHTML='📥 Fetch';
 }
 
 function showVer(ver,btn){
