@@ -339,9 +339,52 @@ textarea{resize:vertical;min-height:90px}
 .kbd-help kbd{background:var(--bg2);border:1px solid var(--brd);border-radius:4px;padding:1px 6px;font-size:.72rem;font-family:inherit;font-weight:600;color:var(--txt)}
 .kbd-help .kbd-row{display:flex;justify-content:space-between;gap:20px;margin-bottom:4px}
 /* STUDY CHAT */
-.study-chat{margin-bottom:18px;border:2px solid var(--brd);border-radius:var(--rad-sm);background:var(--bg2);overflow:hidden;animation:fadeIn .4s ease;}
-.chat-header{background:linear-gradient(135deg,var(--pri-dk),var(--pri-lt));color:#fff;padding:10px 14px;font-size:.85rem;font-weight:700;}
-.chat-messages{height:220px;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;background:var(--card);}
+.study-chat.floating-chat {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 360px;
+    max-width: calc(100vw - 48px);
+    height: 500px;
+    max-height: calc(100vh - 120px);
+    z-index: 900;
+    box-shadow: var(--sh-lg);
+    border-radius: var(--rad);
+    display: flex;
+    flex-direction: column;
+    background: var(--bg2);
+    border: 1px solid var(--brd);
+    margin: 0;
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    overflow: hidden;
+}
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.chat-header {
+    background: linear-gradient(135deg, var(--pri-dk), var(--pri-lt));
+    color: #fff;
+    padding: 12px 16px;
+    font-size: .95rem;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.chat-close {
+    background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; line-height: 1; opacity: 0.8; transition: opacity 0.2s;
+}
+.chat-close:hover { opacity: 1; }
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--card);
+}
 .chat-msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:.85rem;line-height:1.5;word-wrap:break-word;}
 .chat-msg.user{align-self:flex-end;background:var(--pri);color:#fff;border-bottom-right-radius:4px;}
 .chat-msg.ai{align-self:flex-start;background:var(--bg2);color:var(--txt);border-bottom-left-radius:4px;}
@@ -362,6 +405,46 @@ textarea{resize:vertical;min-height:90px}
 .save-note-btn:hover {
     background: var(--pri);
     color: #fff;
+}
+.chat-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pri), var(--pri-lt));
+    color: #fff;
+    border: none;
+    box-shadow: var(--sh-lg);
+    font-size: 1.6rem;
+    cursor: pointer;
+    z-index: 901;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.chat-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(91,58,140,0.5);
+}
+.chat-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    background: var(--danger);
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--card);
+    animation: popIn 0.3s ease;
 }
 @media(max-width:850px){
   .entry-layout{grid-template-columns:1fr}
@@ -384,6 +467,8 @@ textarea{resize:vertical;min-height:90px}
   .entry-form-wrapper{padding:16px}
   .main-content{padding:12px 8px 80px}
   .prayer-stats-row{grid-template-columns:1fr}
+  .study-chat.floating-chat { width:calc(100vw - 32px); right:16px; bottom:80px; }
+  .chat-fab { right:16px; bottom:16px; width:50px; height:50px; font-size:1.5rem; }
 }
 </style>
 </head>
@@ -454,14 +539,6 @@ textarea{resize:vertical;min-height:90px}
               </div>
             </div>
             <div id="dynamicFields"></div>
-            <div id="studyChat" class="study-chat" style="display:none">
-              <div class="chat-header">💡 AI Study Buddy</div>
-              <div class="chat-messages" id="chatMessages"></div>
-              <div class="chat-input-row">
-                <input type="text" id="chatInput" placeholder="Ask a question about this verse..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendChatMessage()}">
-                <button type="button" class="btn-primary" style="width:auto;padding:8px 16px;" onclick="sendChatMessage()" id="chatSendBtn">Send</button>
-              </div>
-            </div>
             <div class="form-group">
               <label>🏷️ Tags (optional)</label>
               <div class="tag-input-wrapper" id="tagWrapper" onclick="document.getElementById('tagInput').focus()">
@@ -585,6 +662,27 @@ textarea{resize:vertical;min-height:90px}
       <div class="ach-category"><h3>⭐ Special</h3><div class="ach-grid" id="achSpecial"></div></div>
     </section>
   </main>
+
+  <!-- FLOATING CHAT WIDGET -->
+  <button id="chatFab" class="chat-fab" onclick="toggleChat()" title="AI Study Buddy">
+    💬<span class="chat-badge" id="chatBadge" style="display:none">!</span>
+  </button>
+
+  <div id="studyChat" class="study-chat floating-chat" style="display:none">
+    <div class="chat-header">
+      <span>💡 AI Study Buddy</span>
+      <button class="chat-close" onclick="toggleChat()" title="Close chat">×</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div style="text-align:center;color:var(--txt3);font-size:0.85rem;margin-top:auto;margin-bottom:auto;">
+        Fetch a scripture to start studying!
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chatInput" placeholder="Ask a question..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendChatMessage()}">
+      <button type="button" class="btn-primary" style="width:auto;padding:8px 16px;" onclick="sendChatMessage()" id="chatSendBtn">Send</button>
+    </div>
+  </div>
 </div>
 
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
@@ -943,10 +1041,10 @@ async function fetchScripture(){
         { role: "model", parts: [{ text: `Understood! I'm ready to help you study ${data.reference}. What questions do you have?` }] }
     ];
     
-    // Unhide the chatbox and show the welcome message
-    document.getElementById('studyChat').style.display = 'block';
+    // Update and auto-open the chat
     const welcomeText = formatMarkdown(`I am ready to help you study ${data.reference}! Ask me anything.`);
     document.getElementById('chatMessages').innerHTML = `<div class="chat-msg ai"><div class="ai-text">${welcomeText}</div></div>`;
+    toggleChat(true);
 
     // 4. Clean up the reference input
     document.getElementById('entryRef').value = data.reference;
@@ -972,6 +1070,20 @@ function formatMarkdown(text) {
         .replace(/\n/g, '<br>'); // Convert single line breaks
 }
 
+// ===== TOGGLE CHAT WIDGET =====
+function toggleChat(forceOpen = false) {
+    const chat = document.getElementById('studyChat');
+    const badge = document.getElementById('chatBadge');
+    
+    if (forceOpen || chat.style.display === 'none') {
+        chat.style.display = 'flex';
+        badge.style.display = 'none'; // clear notification
+        setTimeout(() => document.getElementById('chatInput').focus(), 100);
+    } else {
+        chat.style.display = 'none';
+    }
+}
+
 // ===== STUDY CHAT LOGIC =====
 async function sendChatMessage() {
     const input = document.getElementById('chatInput');
@@ -980,6 +1092,16 @@ async function sendChatMessage() {
 
     const msgBox = document.getElementById('chatMessages');
     const btn = document.getElementById('chatSendBtn');
+    
+    // Clear out the empty placeholder if present
+    if(currentChatHistory.length === 0 && msgBox.innerHTML.includes("Fetch a scripture")) {
+      msgBox.innerHTML = '';
+      // Initialize an empty array so we can talk even without a verse fetch
+      currentChatHistory = [
+          { role: "user", parts: [{ text: "I am studying the Bible. Please help me answer my questions." }] },
+          { role: "model", parts: [{ text: "I'd be happy to help you study. What are you looking at today?" }] }
+      ];
+    }
     
     // 1. Show user message
     msgBox.innerHTML += `<div class="chat-msg user">${esc(text)}</div>`;
@@ -1011,6 +1133,11 @@ async function sendChatMessage() {
         currentChatHistory.push({ role: "user", parts: [{ text }] });
         currentChatHistory.push({ role: "model", parts: [{ text: data.text }] });
         
+        // Show badge if chat is currently closed
+        if (document.getElementById('studyChat').style.display === 'none') {
+            document.getElementById('chatBadge').style.display = 'flex';
+        }
+
         msgBox.scrollTop = msgBox.scrollHeight;
     } catch(e) {
         showToast('Chat connection failed.', 'error');
@@ -1045,6 +1172,9 @@ function saveToNotes(btn) {
         }
         
         showToast('💾 Insight saved to your notes!', 'success');
+        
+        // Switch to the notes tab visually if not visible
+        document.getElementById('field_notes').scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
         showToast('⚠️ Could not find the Notes box.', 'error');
     }
@@ -1438,4 +1568,4 @@ function clearAllData(){
 })();
 </script>
 </body>
-</html
+</html>
