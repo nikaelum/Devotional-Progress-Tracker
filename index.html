@@ -35,8 +35,6 @@
 [data-theme="dark"] .ach-card.unlocked{background:linear-gradient(135deg,#2a2438,#332c45);border-color:var(--gold)}
 [data-theme="dark"] .rte-editor{background:var(--bg2);color:var(--txt)}
 [data-theme="dark"] .rte-toolbar{background:var(--card);border-color:var(--brd)}
-[data-theme="dark"] .ver-panel{background:var(--bg2);border-color:var(--brd)}
-[data-theme="dark"] .ver-tab-row{background:var(--card)}
 [data-theme="dark"] .tag-input-wrapper{background:var(--bg2);border-color:var(--brd)}
 [data-theme="dark"] .streak-banner{background:linear-gradient(135deg,#2a1f45,#3a2d5a)}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--txt);line-height:1.6;min-height:100vh;transition:background .3s,color .3s}
@@ -159,27 +157,6 @@ textarea{resize:vertical;min-height:90px}
 /* Word count indicator */
 .word-count{display:flex;justify-content:flex-end;font-size:.72rem;color:var(--txt3);margin-top:3px;gap:12px}
 .word-count .wc-total{font-weight:600;color:var(--pri)}
-
-/* VERSION PANEL */
-.ver-panel{margin-top:10px;border:2px solid var(--brd);border-radius:var(--rad-sm);overflow:hidden;background:var(--bg2);animation:fadeIn .3s ease}
-.ver-tab-row{display:flex;background:var(--card);border-bottom:2px solid var(--brd);position:relative}
-.ver-tab{flex:1;padding:9px 6px;border:none;background:none;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--txt3);transition:all .3s;text-align:center;position:relative}
-.ver-tab:hover{color:var(--pri)}
-.ver-tab.active{color:var(--pri);background:var(--pri-bg)}
-.ver-tab.active::after{content:'';position:absolute;bottom:-2px;left:10%;right:10%;height:3px;background:var(--pri);border-radius:3px 3px 0 0}
-.ver-tab .ver-tab-sub{display:block;font-size:.62rem;font-weight:500;opacity:.7;margin-top:1px}
-.ver-tab.ver-loading{opacity:.5}
-.ver-tab.ver-error{opacity:.4}
-.ver-tab .ver-status{display:inline-block;margin-left:4px;font-size:.7rem}
-.ver-close{position:absolute;right:4px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--txt3);padding:4px 8px;z-index:2;border-radius:4px;transition:all .2s}
-.ver-close:hover{background:var(--danger);color:#fff}
-.ver-body{padding:14px 16px}
-.ver-name{font-size:.72rem;color:var(--acc);font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
-.ver-text{font-size:.9rem;color:var(--txt);line-height:1.75;font-style:italic;margin-bottom:12px;max-height:220px;overflow-y:auto;white-space:pre-wrap}
-.ver-text.ver-empty{color:var(--txt3);font-style:normal;font-size:.84rem}
-.ver-use-btn{padding:8px 18px;background:var(--pri);color:#fff;border:none;border-radius:var(--rad-sm);font-size:.82rem;cursor:pointer;font-weight:600;transition:all .3s;display:inline-flex;align-items:center;gap:5px}
-.ver-use-btn:hover{background:var(--pri-lt);transform:translateY(-1px)}
-.ver-use-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
 .journal-header{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
 .journal-header h2{font-size:1.2rem;font-weight:700;color:var(--pri-dk)}
@@ -382,8 +359,6 @@ textarea{resize:vertical;min-height:90px}
   .entry-form-wrapper{padding:16px}
   .main-content{padding:12px 8px 80px}
   .prayer-stats-row{grid-template-columns:1fr}
-  .ver-tab{padding:7px 4px;font-size:.72rem}
-  .ver-tab .ver-tab-sub{font-size:.56rem}
 }
 </style>
 </head>
@@ -451,19 +426,6 @@ textarea{resize:vertical;min-height:90px}
               <div class="ref-row">
                 <input type="text" id="entryRef" placeholder="e.g., John 3:16 or Philippians 4:6-7">
                 <button type="button" class="fetch-btn" onclick="fetchScripture()" id="fetchBtn">📥 Fetch</button>
-              </div>
-              <div id="verPanel" class="ver-panel" style="display:none">
-                <div class="ver-tab-row">
-                  <button type="button" class="ver-tab active" data-ver="kjv" onclick="showVer('kjv',this)">KJV<span class="ver-tab-sub">King James</span></button>
-                  <button type="button" class="ver-tab" data-ver="web" onclick="showVer('web',this)">WEB<span class="ver-tab-sub">World English</span></button>
-                  <button type="button" class="ver-tab" data-ver="bbe" onclick="showVer('bbe',this)">BBE<span class="ver-tab-sub">Basic English</span></button>
-                  <button type="button" class="ver-close" onclick="closeVerPanel()">×</button>
-                </div>
-                <div class="ver-body">
-                  <div class="ver-name" id="verName"></div>
-                  <div class="ver-text" id="verText"></div>
-                  <button type="button" class="ver-use-btn" id="verUseBtn" onclick="useSelectedVer()">📖 Use this translation</button>
-                </div>
               </div>
             </div>
             <div id="dynamicFields"></div>
@@ -619,15 +581,6 @@ textarea{resize:vertical;min-height:90px}
 <script>
 const ENTRIES_KEY='dt_entries',ACH_KEY='dt_ach',PRAYER_KEY='dt_prayers',THEME_KEY='dt_theme',DRAFT_KEY='dt_draft',FAVS_KEY='dt_favs';
 
-// ===== BIBLE VERSIONS (honest labels) =====
-const BIBLE_VERSIONS={
-  kjv:{name:'KJV',fullName:'King James Version',apiParam:'kjv'},
-  web:{name:'WEB',fullName:'World English Bible',apiParam:'web'},
-  bbe:{name:'BBE',fullName:'Bible in Basic English',apiParam:'bbe'}
-};
-
-let fetchedVersions={};
-let activeVer='kjv';
 let currentImage=null;
 let currentTags=[];
 let activeTagFilter=null;
@@ -637,7 +590,7 @@ const VOTD_VERSES=[
   {text:"Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",ref:"Proverbs 3:5-6"},
   {text:"I can do all things through Christ which strengtheneth me.",ref:"Philippians 4:13"},
   {text:"The LORD is my shepherd; I shall not want.",ref:"Psalm 23:1"},
-  {text:"Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.",ref:"Joshua 1:9"},
+  {text:"Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever goest.",ref:"Joshua 1:9"},
   {text:"But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.",ref:"Isaiah 40:31"},
   {text:"And we know that all things work together for good to them that love God, to them who are the called according to his purpose.",ref:"Romans 8:28"},
   {text:"Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God.",ref:"Philippians 4:6"},
@@ -898,7 +851,7 @@ function startDraftTimer(){if(draftTimer)clearInterval(draftTimer);draftTimer=se
 function resetForm(){
   document.getElementById('entryTitle').value='';document.getElementById('entryRef').value='';
   document.querySelectorAll('.rte-editor').forEach(el=>el.innerHTML='');
-  removeImage();currentTags=[];renderTagPills();closeVerPanel();updateWordCount();
+  removeImage();currentTags=[];renderTagPills();updateWordCount();
   document.getElementById('editingId').value='';
   document.getElementById('formHeading').textContent='📝 Create New Journal Entry';
   document.getElementById('submitBtn').innerHTML='💾 Save Devotional Entry';
@@ -953,9 +906,6 @@ async function fetchScripture(){
     // 4. Clean up the reference input
     document.getElementById('entryRef').value = data.reference;
     
-    // Hide the old version comparison panel since we bypass it now
-    document.getElementById('verPanel').style.display='none';
-    
     showToast('✨ Scripture & Context loaded!', 'success');
   } catch (error) {
     showToast('❌ Could not connect to AI', 'error');
@@ -965,23 +915,6 @@ async function fetchScripture(){
     btn.innerHTML='📥 Fetch';
   }
 }
-
-function showVer(ver,btn){
-  activeVer=ver;
-  document.querySelectorAll('.ver-tab').forEach(t=>t.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  const data=fetchedVersions[ver];const info=BIBLE_VERSIONS[ver];
-  const nameEl=document.getElementById('verName'),textEl=document.getElementById('verText'),useBtn=document.getElementById('verUseBtn');
-  if(data){nameEl.textContent=info.fullName+' ('+info.name+')';textEl.textContent=data.text;textEl.classList.remove('ver-empty');useBtn.disabled=false}
-  else{nameEl.textContent=info.fullName+' ('+info.name+')';textEl.textContent='This translation could not be loaded for this reference.';textEl.classList.add('ver-empty');useBtn.disabled=true}
-}
-function useSelectedVer(){
-  const data=fetchedVersions[activeVer];if(!data){showToast('No text available','error');return}
-  const target=document.getElementById('field_scripture')||document.getElementById('field_highlight')||document.getElementById('field_freewrite');
-  if(target){target.textContent=data.text;updateWordCount()}
-  showToast(`📖 ${BIBLE_VERSIONS[activeVer].name} text inserted!`,'success');
-}
-function closeVerPanel(){document.getElementById('verPanel').style.display='none'}
 
 // ===== IMAGE UPLOAD WITH CANVAS COMPRESSION =====
 function handleImageUpload(e){
