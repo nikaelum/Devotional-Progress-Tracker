@@ -346,6 +346,23 @@ textarea{resize:vertical;min-height:90px}
 .chat-msg.user{align-self:flex-end;background:var(--pri);color:#fff;border-bottom-right-radius:4px;}
 .chat-msg.ai{align-self:flex-start;background:var(--bg2);color:var(--txt);border-bottom-left-radius:4px;}
 .chat-input-row{display:flex;gap:8px;padding:10px;background:var(--card);border-top:1px solid var(--brd);}
+.save-note-btn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    background: var(--pri-bg);
+    color: var(--pri);
+    border: 1px solid var(--pri-lt);
+    border-radius: var(--rad-sm);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.save-note-btn:hover {
+    background: var(--pri);
+    color: #fff;
+}
 @media(max-width:850px){
   .entry-layout{grid-template-columns:1fr}
   .soap-guide{position:static}
@@ -928,7 +945,8 @@ async function fetchScripture(){
     
     // Unhide the chatbox and show the welcome message
     document.getElementById('studyChat').style.display = 'block';
-    document.getElementById('chatMessages').innerHTML = `<div class="chat-msg ai">I am ready to help you study ${data.reference}! Ask me anything.</div>`;
+    const welcomeText = formatMarkdown(`I am ready to help you study ${data.reference}! Ask me anything.`);
+    document.getElementById('chatMessages').innerHTML = `<div class="chat-msg ai"><div class="ai-text">${welcomeText}</div></div>`;
 
     // 4. Clean up the reference input
     document.getElementById('entryRef').value = data.reference;
@@ -941,6 +959,17 @@ async function fetchScripture(){
     btn.disabled=false;
     btn.innerHTML='📥 Fetch';
   }
+}
+
+// ===== MARKDOWN FORMATTER =====
+function formatMarkdown(text) {
+    if (!text) return '';
+    return text
+        .replace(/</g, "&lt;").replace(/>/g, "&gt;") // Escape HTML for safety
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Convert **bold** to <strong>
+        .replace(/\*(.*?)\*/g, '<em>$1</em>') // Convert *italic* to <em>
+        .replace(/\n\n/g, '<br><br>') // Convert double spacing to paragraphs
+        .replace(/\n/g, '<br>'); // Convert single line breaks
 }
 
 // ===== STUDY CHAT LOGIC =====
@@ -971,8 +1000,12 @@ async function sendChatMessage() {
         const data = await response.json();
         if(!response.ok) throw new Error(data.error);
 
-        // 3. Show AI response (using your existing renderContent function to format line breaks safely)
-        msgBox.innerHTML += `<div class="chat-msg ai">${renderContent(data.text)}</div>`;
+        // 3. Show AI response with a "Save" button
+        const aiHtml = formatMarkdown(data.text);
+        msgBox.innerHTML += `<div class="chat-msg ai">
+            <div class="ai-text">${aiHtml}</div>
+            <button class="save-note-btn" onclick="saveToNotes(this)" title="Copy to Additional Notes">💾 Save to Notes</button>
+        </div>`;
         
         // 4. Save to history so the AI remembers for the next question
         currentChatHistory.push({ role: "user", parts: [{ text }] });
@@ -985,6 +1018,35 @@ async function sendChatMessage() {
     } finally {
         btn.disabled = false; 
         btn.innerHTML = 'Send';
+    }
+}
+
+// ===== SAVE AI INSIGHT TO NOTES =====
+function saveToNotes(btn) {
+    // 1. Grab the text from the specific chat bubble
+    const msgDiv = btn.parentElement.querySelector('.ai-text');
+    const textToSave = msgDiv.innerHTML;
+
+    // 2. Find the "Additional Notes" editor box
+    const notesBox = document.getElementById('field_notes');
+    
+    if (notesBox) {
+        // 3. Format it beautifully as a blockquote
+        const formattedNote = `<br><blockquote style="border-left: 3px solid var(--pri); padding-left: 10px; margin-left: 0; color: var(--txt2);">
+            <strong>🤖 AI Study Insight:</strong><br>${textToSave}
+        </blockquote><br>`;
+        
+        // 4. Append it to whatever is already in the notes box
+        const currentNotes = notesBox.innerHTML;
+        if (currentNotes === '<br>' || currentNotes.trim() === '') {
+            notesBox.innerHTML = formattedNote;
+        } else {
+            notesBox.innerHTML = currentNotes + formattedNote;
+        }
+        
+        showToast('💾 Insight saved to your notes!', 'success');
+    } else {
+        showToast('⚠️ Could not find the Notes box.', 'error');
     }
 }
 
@@ -1376,4 +1438,4 @@ function clearAllData(){
 })();
 </script>
 </body>
-</html>
+</html
