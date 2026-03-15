@@ -5,6 +5,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>✝ Devotional Tracker</title>
+    <meta name="apple-mobile-web-app-title" content="Devotions">
+<meta name="application-name" content="Devotions">
+
+<link rel="icon" type="image/png" href="/icon.png">
+<link rel="apple-touch-icon" href="/icon.png">
+
+<link rel="manifest" href="/manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -21,11 +28,20 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
 .header-controls{display:flex;gap:8px}
 .theme-toggle,.kbd-toggle{background:var(--card-bg);border:1px solid var(--card-brd);color:var(--txt);width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s;backdrop-filter:var(--glass-blur);box-shadow:var(--sh-glow)}
 .theme-toggle:hover,.kbd-toggle:hover{transform:scale(1.05);color:var(--pri);border-color:var(--pri)}
-.tab-nav{display:flex;background:var(--card-bg);border:1px solid var(--card-brd);backdrop-filter:var(--glass-blur);position:fixed;bottom:calc(24px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:100;width:calc(100% - 32px);max-width:600px;border-radius:var(--rad-pill);box-shadow:var(--sh-glow);padding:8px;justify-content:space-between}
-.tab-btn{flex:1;padding:10px 0;border:none;background:transparent;cursor:pointer;font-size:0.65rem;font-weight:500;color:var(--txt2);transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:var(--rad-pill);font-family:inherit;text-transform:uppercase;letter-spacing:1px}
+
+/* Tab Nav updated for mobile scrolling */
+.tab-nav {
+    display: flex; background: var(--card-bg); border: 1px solid var(--card-brd); backdrop-filter: var(--glass-blur); position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 100; width: calc(100% - 32px); max-width: 600px; border-radius: var(--rad-pill); box-shadow: var(--sh-glow); padding: 8px;
+    overflow-x: auto; white-space: nowrap; flex-wrap: nowrap; justify-content: flex-start; scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+    flex: 1; min-width: 72px; flex-shrink: 0; padding: 10px 0; border: none; background: transparent; cursor: pointer; font-size: 0.65rem; font-weight: 500; color: var(--txt2); transition: all 0.3s; display: flex; flex-direction: column; align-items: center; gap: 4px; border-radius: var(--rad-pill); font-family: inherit; text-transform: uppercase; letter-spacing: 1px;
+}
 .tab-btn .tab-icon{font-size:1.2rem;margin-bottom:2px;transition:all 0.3s;filter:grayscale(100%) opacity(0.5)}
 .tab-btn.active{color:var(--pri);background:var(--pri-bg)}
 .tab-btn.active .tab-icon{filter:none;transform:scale(1.1);text-shadow:0 0 10px var(--pri)}
+
 .main-content{max-width:700px;margin:0 auto;padding:0 20px calc(140px + env(safe-area-inset-bottom));position:relative;z-index:5}
 .tab-panel{display:none;animation:floatUp 0.6s cubic-bezier(0.2,0.8,0.2,1) forwards;opacity:0}
 .tab-panel.active{display:block}
@@ -257,6 +273,12 @@ textarea{resize:vertical;min-height:90px}
 .kbd-help kbd{background:var(--input-bg);border:1px solid var(--card-brd);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-family:monospace;color:var(--txt);margin-left:12px}
 .kbd-help .kbd-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
 .kbd-help .kbd-row:last-child{margin-bottom:0}
+
+/* New Elements */
+.chat-tab-container { display: flex; flex-direction: column; height: calc(100vh - 280px); min-height: 400px; }
+.chat-tab-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: var(--input-bg); border-radius: var(--rad-sm); border: 1px solid var(--card-brd); margin-bottom: 16px; }
+.general-date-time { text-align: center; color: var(--txt2); font-size: 0.95rem; margin-bottom: 24px; font-style: italic; font-family: var(--font-serif); border-bottom: 1px solid var(--card-brd); padding-bottom: 12px; }
+
 @media(max-width:480px){.study-chat{width:calc(100vw - 32px);right:16px;bottom:calc(140px + env(safe-area-inset-bottom))}.chat-fab{right:16px;bottom:calc(84px + env(safe-area-inset-bottom));width:52px;height:52px;font-size:1.3rem}}
 </style>
 </head>
@@ -315,11 +337,43 @@ textarea{resize:vertical;min-height:90px}
 </div>
 </section>
 
+<!-- TAB: General Journal -->
+<section id="tab-general" class="tab-panel" role="tabpanel">
+    <div class="glass-card entry-form-wrapper">
+        <h2 class="serif" style="font-size:2rem;text-align:center;margin-bottom:8px;color:var(--pri)">Diary</h2>
+        <div id="generalDateTime" class="general-date-time"></div>
+        <form id="generalForm" onsubmit="saveGeneralEntry(event)">
+            <div class="form-group">
+                <input type="text" id="generalTitle" placeholder="Title your thoughts..." required style="font-size: 1.2rem; font-family: var(--font-serif); font-weight: 600;">
+            </div>
+            <div class="form-group">
+                <div class="rte-wrapper">
+                    <div class="rte-toolbar">
+                        <button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('bold')">B</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('italic')" style="font-style:italic">I</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('underline')" style="text-decoration:underline">U</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('insertUnorderedList')">•</button>
+                        <button type="button" class="mic-btn" style="margin-left:auto; color: var(--pri);" onmousedown="event.preventDefault()" onclick="toggleRecording(this, 'generalBody')" title="Voice Type">🎙️</button>
+                    </div>
+                    <div class="rte-editor" contenteditable="true" id="generalBody" data-placeholder="What is on your heart today?" style="min-height: 250px;" oninput="updateWordCount()"></div>
+                </div>
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top: 16px;">Save Entry</button>
+        </form>
+    </div>
+</section>
+
 <section id="tab-journal" class="tab-panel" role="tabpanel">
 <div class="section-header"><h2 class="section-title serif">Chronicles</h2></div>
 <div class="journal-controls">
 <input type="search" id="journalSearch" placeholder="Search entries..." oninput="renderJournal()">
-<select id="journalMode" onchange="renderJournal()"><option value="all">All Templates</option><option value="soap">SOAP</option><option value="hear">H.E.A.R.</option><option value="free">Free Write</option></select>
+<select id="journalMode" onchange="renderJournal()">
+    <option value="all">All Templates</option>
+    <option value="soap">SOAP</option>
+    <option value="hear">H.E.A.R.</option>
+    <option value="free">Free Write</option>
+    <option value="general">General Journal</option>
+</select>
 <select id="journalSort" onchange="renderJournal()"><option value="newest">Newest First</option><option value="oldest">Oldest First</option><option value="favorites">Bookmarks First</option></select>
 </div>
 <div id="journalTagFilters" class="journal-tag-filters"></div>
@@ -364,6 +418,21 @@ textarea{resize:vertical;min-height:90px}
 </div>
 </section>
 
+<!-- TAB: Dedicated Chat -->
+<section id="tab-chat" class="tab-panel" role="tabpanel">
+    <div class="section-header">
+        <h2 class="section-title serif">AI Study Buddy</h2>
+        <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.75rem; border-color: var(--danger); color: var(--danger);" onclick="clearChat()">🗑 Clear</button>
+    </div>
+    <div class="chat-tab-container">
+        <div class="chat-tab-messages" id="tabChatMessages"></div>
+        <div class="chat-input-row" style="border-radius: var(--rad-sm); border: 1px solid var(--card-brd);">
+            <input type="text" id="tabChatInput" placeholder="Ask for insight..." onkeydown="if(event.key==='Enter'){event.preventDefault();handleSendChat('tabChatInput')}">
+            <button type="button" class="btn-primary" style="width:auto;padding:12px 20px" onclick="handleSendChat('tabChatInput')" id="tabChatSendBtn">Ask</button>
+        </div>
+    </div>
+</section>
+
 <section id="tab-prayers" class="tab-panel" role="tabpanel">
 <div class="section-header"><h2 class="section-title serif">Petitions & Thanks</h2></div>
 <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
@@ -400,18 +469,23 @@ textarea{resize:vertical;min-height:90px}
 </main>
 
 <nav class="tab-nav" role="tablist">
-<button class="tab-btn active" onclick="switchTab('new-entry')" data-tab="new-entry" role="tab"><span class="tab-icon">✧</span><span>Write</span></button>
-<button class="tab-btn" onclick="switchTab('journal')" data-tab="journal" role="tab"><span class="tab-icon">📖</span><span>Journal</span></button>
-<button class="tab-btn" onclick="switchTab('progress')" data-tab="progress" role="tab"><span class="tab-icon">✨</span><span>Stats</span></button>
-<button class="tab-btn" onclick="switchTab('prayers')" data-tab="prayers" role="tab"><span class="tab-icon">🙏</span><span>Prayers</span></button>
-<button class="tab-btn" onclick="switchTab('achievements')" data-tab="achievements" role="tab"><span class="tab-icon">🏆</span><span>Awards</span></button>
+    <button class="tab-btn active" onclick="switchTab('new-entry')" data-tab="new-entry" role="tab"><span class="tab-icon">✧</span><span>Study</span></button>
+    <button class="tab-btn" onclick="switchTab('general')" data-tab="general" role="tab"><span class="tab-icon">✎</span><span>Diary</span></button>
+    <button class="tab-btn" onclick="switchTab('journal')" data-tab="journal" role="tab"><span class="tab-icon">📖</span><span>Journal</span></button>
+    <button class="tab-btn" onclick="switchTab('progress')" data-tab="progress" role="tab"><span class="tab-icon">✨</span><span>Stats</span></button>
+    <button class="tab-btn" onclick="switchTab('chat')" data-tab="chat" role="tab"><span class="tab-icon">💬</span><span>Chat</span></button>
+    <button class="tab-btn" onclick="switchTab('prayers')" data-tab="prayers" role="tab"><span class="tab-icon">🙏</span><span>Prayers</span></button>
+    <button class="tab-btn" onclick="switchTab('achievements')" data-tab="achievements" role="tab"><span class="tab-icon">🏆</span><span>Awards</span></button>
 </nav>
 
 <button id="chatFab" class="chat-fab" onclick="toggleChat()" title="AI Study Buddy">✧ <span class="chat-badge" id="chatBadge" style="display:none">!</span></button>
 <div id="studyChat" class="study-chat" style="display:none">
 <div class="chat-header"><span>AI Study Guide</span><button class="chat-close" onclick="toggleChat()" title="Close">✕</button></div>
-<div class="chat-messages" id="chatMessages"><div style="text-align:center;color:var(--txt3);font-size:0.85rem;margin:auto;font-family:var(--font-sans);text-transform:uppercase;letter-spacing:1px">Fetch a scripture to begin.</div></div>
-<div class="chat-input-row"><input type="text" id="chatInput" placeholder="Ask for insight..." onkeydown="if(event.key==='Enter'){event.preventDefault();sendChatMessage()}"><button type="button" class="btn-primary" style="width:auto;padding:12px 20px" onclick="sendChatMessage()" id="chatSendBtn">Ask</button></div>
+<div class="chat-messages" id="chatMessages"></div>
+<div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Ask for insight..." onkeydown="if(event.key==='Enter'){event.preventDefault();handleSendChat('chatInput')}">
+    <button type="button" class="btn-primary" style="width:auto;padding:12px 20px" onclick="handleSendChat('chatInput')" id="chatSendBtn">Ask</button>
+</div>
 </div>
 
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal()"><div class="modal-content" onclick="event.stopPropagation()"><button class="modal-close" onclick="closeModal()">✕</button><div id="modalBody"></div></div></div>
@@ -524,7 +598,32 @@ function toggleKbdHelp(){const el=document.getElementById('kbdHelp');el.style.di
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeAchPopup();document.getElementById('kbdHelp').style.display='none';return}if(!e.ctrlKey&&!e.metaKey)return;switch(e.key.toLowerCase()){case 's':e.preventDefault();if(document.getElementById('tab-new-entry').classList.contains('active'))document.getElementById('entryForm').requestSubmit();break;case 'n':e.preventDefault();cancelEdit();switchTab('new-entry');document.getElementById('entryTitle').focus();break;case 'j':e.preventDefault();switchTab('journal');break;case 'k':e.preventDefault();switchTab('journal');setTimeout(()=>document.getElementById('journalSearch').focus(),100);break}});
 
 // ===== TABS =====
-function switchTab(tab){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');const btn=document.querySelector(`.tab-btn[data-tab="${tab}"]`);btn.classList.add('active');if(tab==='journal')renderJournal();if(tab==='progress')renderProgress();if(tab==='achievements')renderAchievements();if(tab==='prayers')renderPrayers()}
+function switchTab(tab){
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tab-'+tab).classList.add('active');
+    const btn=document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+    if(btn) btn.classList.add('active');
+    
+    if(tab==='journal')renderJournal();
+    if(tab==='progress')renderProgress();
+    if(tab==='achievements')renderAchievements();
+    if(tab==='prayers')renderPrayers();
+    if(tab==='chat') {
+        renderChat();
+        setTimeout(()=> {
+            const m = document.getElementById('tabChatMessages');
+            if(m) m.scrollTop = m.scrollHeight;
+        }, 10);
+    }
+    if(tab==='general') {
+        const el = document.getElementById('generalDateTime');
+        if(el) {
+            const opts = { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+            el.textContent = new Date().toLocaleDateString('en-US', opts);
+        }
+    }
+}
 
 // ===== STREAK =====
 function renderStreakBanner(){const entries=getEntries();const streak=getCurrentStreak(entries);const banner=document.getElementById('streakBanner');if(streak<2){banner.innerHTML='';return}const messages=['','','Keep going!','Building a habit!','Consistency is key!','Almost a week!','Incredible!','One full week!'];const msg=streak>=7?`${streak} days strong!`:messages[Math.min(streak,7)];banner.innerHTML=`<div class="glass-card streak-banner ${streak>=7?'fire':''}"><div class="streak-flame">${streak>=7?'🔥':'✨'}</div><div class="streak-info"><strong>${streak}-Day Streak!</strong><p>${msg}</p></div><button class="streak-dismiss" onclick="this.parentElement.remove()">✕</button></div>`}
@@ -577,46 +676,131 @@ function useVotd(){const card=document.getElementById('votdCard');document.getEl
 // ===== MARKDOWN =====
 function formatMarkdown(text){if(!text)return'';return text.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}
 
-// ===== FETCH SCRIPTURE =====
-async function fetchScripture(){
-const ref=document.getElementById('entryRef').value.trim();
-if(!ref){showToast('Please enter a scripture reference','error');return}
-const btn=document.getElementById('fetchBtn');btn.disabled=true;btn.innerHTML='<span class="spin">⏳</span> Loading...';
-try{
-const response=await fetch(`/api/get-scripture?ref=${encodeURIComponent(ref)}`);
-if(!response.ok)throw new Error("API Error");
-const data=await response.json();
-const target=document.getElementById('field_scripture')||document.getElementById('field_highlight')||document.getElementById('field_freewrite');
-if(target)target.innerHTML=data.text;
-currentChatHistory=[{role:"user",parts:[{text:`I am studying ${data.reference}. The text is: "${data.text}". The historical context is: "${data.context}". I will ask you follow-up questions about this.`}]},{role:"model",parts:[{text:`Understood! I'm ready to help you study ${data.reference}. What questions do you have?`}]}];
-const welcomeText=formatMarkdown(`I am ready to help you study ${data.reference}! Ask me anything.`);
-document.getElementById('chatMessages').innerHTML=`<div class="chat-msg ai"><div class="ai-text">${welcomeText}</div></div>`;
-toggleChat(true);
-document.getElementById('entryRef').value=data.reference;
-updateWordCount();showToast('Scripture loaded!','success');
-}catch(error){showToast('Could not connect to AI','error');console.error(error)}
-finally{btn.disabled=false;btn.innerHTML='Fetch'}}
 
-// ===== CHAT =====
+// ===== UNIFIED CHAT LOGIC =====
+function getInitialChat() {
+    return [{ role: "model", parts: [{ text: "Fetch a scripture or say hello to begin our study!" }] }];
+}
+
+function renderChat() {
+    const renderMsg = (msg) => {
+        if (msg.role === 'model') {
+            const aiHtml = formatMarkdown(msg.parts[0].text);
+            return `<div class="chat-msg ai"><div class="ai-text">${aiHtml}</div><button class="save-note-btn" onclick="saveToNotes(this)">Save to Notes</button></div>`;
+        } else {
+            return `<div class="chat-msg user">${esc(msg.parts[0].text)}</div>`;
+        }
+    };
+    
+    let html = '';
+    currentChatHistory.forEach(msg => { if (!msg.hideInUI) html += renderMsg(msg); });
+    
+    const fBox = document.getElementById('chatMessages');
+    const tBox = document.getElementById('tabChatMessages');
+    
+    if(fBox) { fBox.innerHTML = html; fBox.scrollTop = fBox.scrollHeight; }
+    if(tBox) { tBox.innerHTML = html; tBox.scrollTop = tBox.scrollHeight; }
+}
+
+function clearChat() {
+    currentChatHistory = getInitialChat();
+    renderChat();
+    showToast('Conversation cleared', 'info');
+}
+
+async function handleSendChat(inputId) {
+    const input = document.getElementById(inputId);
+    const text = input.value.trim();
+    if(!text) return;
+    input.value = '';
+    
+    // Auto-remove default welcome if it's the first message
+    if(currentChatHistory.length === 1 && currentChatHistory[0].parts[0].text.includes("Fetch a scripture")) {
+        currentChatHistory = [];
+    }
+
+    currentChatHistory.push({ role: "user", parts: [{ text }] });
+    renderChat();
+    
+    const btns = [document.getElementById('chatSendBtn'), document.getElementById('tabChatSendBtn')].filter(Boolean);
+    btns.forEach(b => { b.disabled = true; b.innerHTML = '...'; });
+    
+    try {
+        // Strip UI-only flags for the backend
+        const cleanHistory = currentChatHistory.map(({ role, parts }) => ({ role, parts }));
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ history: cleanHistory, message: text })
+        });
+        
+        const data = await response.json();
+        if(!response.ok) throw new Error(data.error);
+        
+        currentChatHistory.push({ role: "model", parts: [{ text: data.text }] });
+        
+        if(document.getElementById('studyChat').style.display === 'none' && !document.getElementById('tab-chat').classList.contains('active')) {
+            document.getElementById('chatBadge').style.display = 'flex';
+        }
+        renderChat();
+    } catch(e) {
+        showToast('Chat connection failed.', 'error');
+        console.error(e);
+    } finally {
+        btns.forEach(b => { b.disabled = false; b.innerHTML = 'Ask'; });
+    }
+}
+
 function toggleChat(forceOpen=false){const chat=document.getElementById('studyChat');const badge=document.getElementById('chatBadge');if(forceOpen||chat.style.display==='none'){chat.style.display='flex';badge.style.display='none';setTimeout(()=>document.getElementById('chatInput').focus(),100)}else{chat.style.display='none'}}
 
-async function sendChatMessage(){
-const input=document.getElementById('chatInput');const text=input.value.trim();if(!text)return;
-const msgBox=document.getElementById('chatMessages');const btn=document.getElementById('chatSendBtn');
-if(currentChatHistory.length===0&&msgBox.innerHTML.includes("Fetch a scripture")){msgBox.innerHTML='';currentChatHistory=[{role:"user",parts:[{text:"I am studying the Bible. Please help me answer my questions."}]},{role:"model",parts:[{text:"I'd be happy to help you study. What are you looking at today?"}]}]}
-msgBox.innerHTML+=`<div class="chat-msg user">${esc(text)}</div>`;input.value='';msgBox.scrollTop=msgBox.scrollHeight;btn.disabled=true;btn.innerHTML='...';
-try{
-const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({history:currentChatHistory,message:text})});
-const data=await response.json();if(!response.ok)throw new Error(data.error);
-const aiHtml=formatMarkdown(data.text);
-msgBox.innerHTML+=`<div class="chat-msg ai"><div class="ai-text">${aiHtml}</div><button class="save-note-btn" onclick="saveToNotes(this)">Save to Notes</button></div>`;
-currentChatHistory.push({role:"user",parts:[{text}]});currentChatHistory.push({role:"model",parts:[{text:data.text}]});
-if(document.getElementById('studyChat').style.display==='none')document.getElementById('chatBadge').style.display='flex';
-msgBox.scrollTop=msgBox.scrollHeight;
-}catch(e){showToast('Chat connection failed.','error');console.error(e)}
-finally{btn.disabled=false;btn.innerHTML='Ask'}}
+async function fetchScripture() {
+    const ref = document.getElementById('entryRef').value.trim();
+    if(!ref) { showToast('Please enter a scripture reference', 'error'); return; }
+    const btn = document.getElementById('fetchBtn');
+    btn.disabled = true; btn.innerHTML = '<span class="spin">⏳</span>...';
+    
+    try {
+        const response = await fetch(`/api/get-scripture?ref=${encodeURIComponent(ref)}`);
+        if(!response.ok) throw new Error("API Error");
+        const data = await response.json();
+        
+        const target = document.getElementById('field_scripture') || document.getElementById('field_highlight') || document.getElementById('field_freewrite');
+        if(target) target.innerHTML = data.text;
+        
+        currentChatHistory = [
+            { role: "user", parts: [{ text: `I am studying ${data.reference}. Text: "${data.text}". Context: "${data.context}".` }], hideInUI: true },
+            { role: "model", parts: [{ text: `Understood! I'm ready to help you study ${data.reference}. What questions do you have?` }] }
+        ];
+        
+        renderChat();
+        toggleChat(true);
+        document.getElementById('entryRef').value = data.reference;
+        updateWordCount(); showToast('Scripture loaded!', 'success');
+    } catch(error) {
+        showToast('Could not connect to AI', 'error'); console.error(error);
+    } finally {
+        btn.disabled = false; btn.innerHTML = 'Fetch';
+    }
+}
 
-function saveToNotes(btn){const textToSave=btn.parentElement.querySelector('.ai-text').innerHTML;const notesBox=document.getElementById('field_notes');if(notesBox){const append=`<br><blockquote style="border-left:2px solid var(--pri);padding-left:10px;color:var(--txt2);font-style:italic">${textToSave}</blockquote><br>`;const currentNotes=notesBox.innerHTML;notesBox.innerHTML=(currentNotes==='<br>'||currentNotes.trim()==='')?append:currentNotes+append;showToast('Insight saved to notes!','success')}}
+function saveToNotes(btn) {
+    const textToSave = btn.parentElement.querySelector('.ai-text').innerHTML;
+    let targetEditor = document.getElementById('field_notes');
+    
+    // Adapt depending on which screen user is on
+    if(document.getElementById('tab-general').classList.contains('active')) {
+        targetEditor = document.getElementById('generalBody');
+    } else if(!targetEditor) {
+        targetEditor = document.getElementById('field_freewrite');
+    }
+    
+    if(targetEditor) {
+        const append = `<br><blockquote style="border-left:2px solid var(--pri);padding-left:10px;color:var(--txt2);font-style:italic">${textToSave}</blockquote><br>`;
+        const currentNotes = targetEditor.innerHTML;
+        targetEditor.innerHTML = (currentNotes === '<br>' || currentNotes.trim() === '') ? append : currentNotes + append;
+        showToast('Insight saved to notes!', 'success');
+    }
+}
 
 // ===== IMAGE =====
 function handleImageUpload(e){const file=e.target.files[0];if(!file)return;if(file.size>10*1024*1024){showToast('Image must be under 10MB','error');return}const reader=new FileReader();reader.onload=function(ev){const img=new Image();img.onload=function(){const canvas=document.createElement('canvas');let w=img.width,h=img.height;const maxW=800;if(w>maxW){h=Math.round(h*maxW/w);w=maxW}canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);currentImage=canvas.toDataURL('image/jpeg',0.7);document.getElementById('imgPreviewImg').src=currentImage;document.getElementById('imgPreview').style.display='inline-block';document.getElementById('imgUploadArea').style.display='none'};img.src=ev.target.result};reader.readAsDataURL(file)}
@@ -624,6 +808,36 @@ function removeImage(){currentImage=null;document.getElementById('imgPreview').s
 
 // ===== SAVE/EDIT ENTRY =====
 function saveEntry(e){e.preventDefault();const mode=document.getElementById('entryMode').value;const editId=document.getElementById('editingId').value;const entry={id:editId?parseInt(editId):Date.now(),createdAt:new Date().toISOString(),mode,title:document.getElementById('entryTitle').value.trim(),reference:document.getElementById('entryRef').value.trim(),tags:[...currentTags]};if(!entry.title){showToast('Please enter a title','error');return}MODE_FIELDS[mode].forEach(f=>{const el=document.getElementById(f.id);if(el){const content=el.innerHTML||'';entry[f.id.replace('field_','')]=(content==='<br>'?'':content).trim()}});if(currentImage)entry.image=currentImage;const entries=getEntries();if(editId){const idx=entries.findIndex(x=>x.id===parseInt(editId));if(idx!==-1){entry.createdAt=entries[idx].createdAt;entries[idx]=entry}else entries.push(entry)}else{entries.push(entry)}if(!saveEntries(entries))return;resetForm();clearDraft();showToast(editId?'Entry updated!':'Entry saved!','success');checkNewAchievements(entries);renderStreakBanner()}
+
+function saveGeneralEntry(e) {
+    e.preventDefault();
+    const title = document.getElementById('generalTitle').value.trim();
+    const bodyEl = document.getElementById('generalBody');
+    const content = bodyEl.innerHTML || '';
+    const freewrite = (content === '<br>' ? '' : content).trim();
+    
+    if(!title) { showToast('Please enter a title', 'error'); return; }
+    
+    const entry = {
+        id: Date.now(),
+        createdAt: new Date().toISOString(),
+        mode: 'general',
+        title: title,
+        reference: '',
+        freewrite: freewrite,
+        tags: []
+    };
+    
+    const entries = getEntries();
+    entries.push(entry);
+    if(!saveEntries(entries)) return;
+    
+    document.getElementById('generalTitle').value = '';
+    bodyEl.innerHTML = '';
+    showToast('Diary entry saved!', 'success');
+    checkNewAchievements(entries);
+    renderStreakBanner();
+}
 
 function editEntry(id){const e=getEntries().find(x=>x.id===id);if(!e)return;closeModal();switchTab('new-entry');document.getElementById('editingId').value=e.id;document.getElementById('entryMode').value=e.mode||'soap';switchMode();document.getElementById('entryTitle').value=e.title||'';document.getElementById('entryRef').value=e.reference||'';const fieldMap={scripture:'field_scripture',observation:'field_observation',application:'field_application',prayer:'field_prayer',highlight:'field_highlight',explain:'field_explain',apply:'field_apply',respond:'field_respond',freewrite:'field_freewrite',notes:'field_notes'};for(const[key,fieldId]of Object.entries(fieldMap)){const el=document.getElementById(fieldId);if(el&&e[key])el.innerHTML=e[key]}if(e.tags&&Array.isArray(e.tags)){currentTags=[...e.tags];renderTagPills()}else{currentTags=[];renderTagPills()}if(e.image){currentImage=e.image;document.getElementById('imgPreviewImg').src=currentImage;document.getElementById('imgPreview').style.display='inline-block';document.getElementById('imgUploadArea').style.display='none'}else removeImage();document.getElementById('formHeading').textContent='Edit Devotion';document.getElementById('submitBtn').innerHTML='Update Entry';document.getElementById('cancelEditBtn').style.display='inline-flex';updateWordCount();document.getElementById('entryTitle').scrollIntoView({behavior:'smooth',block:'center'})}
 function cancelEdit(){resetForm();switchMode();showToast('Edit cancelled','info')}
@@ -643,7 +857,7 @@ const allTags=getAllTags(entries);const tagFiltersEl=document.getElementById('jo
 if(allTags.length){tagFiltersEl.innerHTML=`<button class="filter-tag ${!activeTagFilter?'active':''}" onclick="setTagFilter(null)">All</button>`+allTags.map(t=>`<button class="filter-tag ${activeTagFilter===t?'active':''}" onclick="setTagFilter('${esc(t)}')">${esc(t)}</button>`).join('')}else tagFiltersEl.innerHTML='';
 const list=document.getElementById('journalList'),empty=document.getElementById('emptyJournal');
 if(!filtered.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
-const modeLabels={soap:'SOAP',hear:'H.E.A.R.',free:'Free'};
+const modeLabels={soap:'SOAP',hear:'H.E.A.R.',free:'Free',general:'General Diary'};
 list.innerHTML=filtered.map(e=>{const d=new Date(e.createdAt);const fav=favs.includes(e.id);const words=eWc(e);const preview=stripHtml(e.observation||e.scripture||e.highlight||e.explain||e.freewrite||e.application||e.apply||'');
 return`<div class="glass-card list-item" onclick="viewEntry(${e.id})">
 <button class="card-delete" onclick="event.stopPropagation();deleteEntry(${e.id})" title="Delete">✕</button>
@@ -662,7 +876,8 @@ function setTagFilter(tag){activeTagFilter=tag;renderJournal()}
 
 function viewEntry(id){
 const e=getEntries().find(x=>x.id===id);if(!e)return;
-const d=new Date(e.createdAt);const words=eWc(e);const fav=isFaved(e.id);const modeLabels={soap:'SOAP',hear:'H.E.A.R.',free:'Free'};
+const d=new Date(e.createdAt);const words=eWc(e);const fav=isFaved(e.id);
+const modeLabels={soap:'SOAP',hear:'H.E.A.R.',free:'Free',general:'General Diary'};
 const fieldLabels={scripture:{l:'Scripture'},observation:{l:'Observation'},application:{l:'Application'},prayer:{l:'Prayer'},highlight:{l:'Highlight'},explain:{l:'Explain'},apply:{l:'Apply'},respond:{l:'Respond'},freewrite:{l:'Thoughts'},notes:{l:'Notes'}};
 let sectionsHtml='';
 for(const[key,meta]of Object.entries(fieldLabels)){if(e[key]?.trim()){sectionsHtml+=`<div class="modal-section"><div class="modal-section-header"><span class="soap-badge">✧</span><h3>${meta.l}</h3></div><div class="section-content">${renderContent(e[key])}</div></div>`}}
@@ -734,7 +949,7 @@ const ACHIEVEMENTS=[
 {id:'deep_thinker',title:'Deep Thinker',desc:'300+ word entry',icon:'🧠',cat:'special',check:(e)=>e.some(x=>eWc(x)>=300),prog:(e)=>({c:Math.min(Math.max(0,...e.map(x=>eWc(x)),0),300),t:300})},
 {id:'prolific_pen',title:'Prolific Pen',desc:'500+ word entry',icon:'🖊',cat:'special',check:(e)=>e.some(x=>eWc(x)>=500),prog:(e)=>({c:Math.min(Math.max(0,...e.map(x=>eWc(x)),0),500),t:500})},
 {id:'sabbath_keeper',title:'Sabbath Keeper',desc:'4 Sunday devotionals',icon:'⛪',cat:'special',check:(e)=>{const s=new Set();e.forEach(x=>{const d=new Date(x.createdAt);if(d.getDay()===0)s.add(dateStr(d))});return s.size>=4},prog:(e)=>{const s=new Set();e.forEach(x=>{const d=new Date(x.createdAt);if(d.getDay()===0)s.add(dateStr(d))});return{c:Math.min(s.size,4),t:4}}},
-{id:'full_house',title:'Full House',desc:'Fill every field of an entry',icon:'🏠',cat:'special',check:(e)=>e.some(x=>{const m=x.mode||'soap';const reqFields=MODE_FIELDS[m].map(f=>f.id.replace('field_',''));return x.title?.trim()&&x.reference?.trim()&&reqFields.every(k=>stripHtml(x[k]||'')?.trim())}),prog:(e)=>({c:e.some(x=>x.title?.trim()&&x.reference?.trim())?1:0,t:1})},
+{id:'full_house',title:'Full House',desc:'Fill every field of an entry',icon:'🏠',cat:'special',check:(e)=>e.some(x=>{const m=x.mode||'soap';const reqFields=MODE_FIELDS[m]?.map(f=>f.id.replace('field_',''))||[];return x.title?.trim()&&x.reference?.trim()&&reqFields.every(k=>stripHtml(x[k]||'')?.trim())}),prog:(e)=>({c:e.some(x=>x.title?.trim()&&x.reference?.trim())?1:0,t:1})},
 {id:'hear_me',title:'Hear Me Out',desc:'Use H.E.A.R. method',icon:'👂',cat:'special',check:(e)=>e.some(x=>x.mode==='hear'),prog:(e)=>({c:e.filter(x=>x.mode==='hear').length>0?1:0,t:1})},
 {id:'free_spirit',title:'Free Spirit',desc:'Use Free Write mode',icon:'🕊',cat:'special',check:(e)=>e.some(x=>x.mode==='free'),prog:(e)=>({c:e.filter(x=>x.mode==='free').length>0?1:0,t:1})},
 {id:'methodical',title:'The Methodical',desc:'Use all 3 template modes',icon:'🔄',cat:'special',check:(e)=>{const m=new Set(e.map(x=>x.mode||'soap'));return m.has('soap')&&m.has('hear')&&m.has('free')},prog:(e)=>{const m=new Set(e.map(x=>x.mode||'soap'));let c=0;if(m.has('soap'))c++;if(m.has('hear'))c++;if(m.has('free'))c++;return{c,t:3}}},
@@ -754,7 +969,7 @@ function closeAchPopup(){document.getElementById('achPopup').classList.remove('s
 function showToast(msg,type='info'){const c=document.getElementById('toastContainer'),t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;c.appendChild(t);setTimeout(()=>{if(t.parentNode)t.remove()},3400)}
 
 // ===== EXPORT/IMPORT =====
-function exportData(){const data={version:3,exportedAt:new Date().toISOString(),entries:getEntries(),prayers:getPrayers(),achievements:getSeenAch(),favorites:getFavs(),theme:localStorage.getItem(THEME_KEY)||'light'};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`devotions-backup-${dateStr(new Date())}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);showToast('Data exported!','success')}
+function exportData(){const data={version:4,exportedAt:new Date().toISOString(),entries:getEntries(),prayers:getPrayers(),achievements:getSeenAch(),favorites:getFavs(),theme:localStorage.getItem(THEME_KEY)||'light'};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`devotions-backup-${dateStr(new Date())}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);showToast('Data exported!','success')}
 function importData(e){const file=e.target.files[0];if(!file)return;if(!confirm('This will replace ALL your current data. Continue?')){e.target.value='';return}const reader=new FileReader();reader.onload=function(ev){try{const data=JSON.parse(ev.target.result);if(!data||typeof data!=='object')throw new Error();if(data.entries&&Array.isArray(data.entries)){if(!saveEntries(data.entries)){e.target.value='';return}}if(data.prayers&&Array.isArray(data.prayers))savePrayers(data.prayers);if(data.achievements&&Array.isArray(data.achievements))setSeenAch(data.achievements);if(data.favorites&&Array.isArray(data.favorites))setFavs(data.favorites);if(data.theme)localStorage.setItem(THEME_KEY,data.theme);loadTheme();renderJournal();renderProgress();renderAchievements();renderPrayers();renderStreakBanner();showToast('Import successful!','success')}catch(err){showToast('Invalid backup file.','error')}e.target.value=''};reader.readAsText(file)}
 function clearAllData(){if(!confirm('Permanently delete ALL data? This cannot be undone.'))return;localStorage.removeItem(ENTRIES_KEY);localStorage.removeItem(PRAYER_KEY);localStorage.removeItem(ACH_KEY);localStorage.removeItem(DRAFT_KEY);localStorage.removeItem(FAVS_KEY);renderJournal();renderProgress();renderAchievements();renderPrayers();renderStreakBanner();showToast('All data cleared.','info')}
 
@@ -845,7 +1060,28 @@ async function toggleRecording(btn, targetId) {
 }
 
 // ===== INIT =====
-(function init(){loadTheme();switchMode();loadDraft();loadVotd();startDraftTimer();renderStreakBanner();const entries=getEntries(),stats=getStats(entries),seen=getSeenAch();ACHIEVEMENTS.forEach(a=>{if(a.check(entries,stats)&&!seen.includes(a.id))seen.push(a.id)});setSeenAch(seen);renderJournal();renderProgress();renderAchievements();renderPrayers();updateWordCount()})();
+(function init(){
+    loadTheme();
+    switchMode();
+    loadDraft();
+    loadVotd();
+    startDraftTimer();
+    renderStreakBanner();
+    
+    if(currentChatHistory.length === 0) {
+        currentChatHistory = getInitialChat();
+        renderChat();
+    }
+    
+    const entries=getEntries(),stats=getStats(entries),seen=getSeenAch();
+    ACHIEVEMENTS.forEach(a=>{if(a.check(entries,stats)&&!seen.includes(a.id))seen.push(a.id)});
+    setSeenAch(seen);
+    renderJournal();
+    renderProgress();
+    renderAchievements();
+    renderPrayers();
+    updateWordCount();
+})();
 </script>
 </body>
 </html>
