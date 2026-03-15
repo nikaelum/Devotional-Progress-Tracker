@@ -737,7 +737,93 @@ function showToast(msg,type='info'){const c=document.getElementById('toastContai
 function exportData(){const data={version:3,exportedAt:new Date().toISOString(),entries:getEntries(),prayers:getPrayers(),achievements:getSeenAch(),favorites:getFavs(),theme:localStorage.getItem(THEME_KEY)||'light'};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`devotions-backup-${dateStr(new Date())}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);showToast('Data exported!','success')}
 function importData(e){const file=e.target.files[0];if(!file)return;if(!confirm('This will replace ALL your current data. Continue?')){e.target.value='';return}const reader=new FileReader();reader.onload=function(ev){try{const data=JSON.parse(ev.target.result);if(!data||typeof data!=='object')throw new Error();if(data.entries&&Array.isArray(data.entries)){if(!saveEntries(data.entries)){e.target.value='';return}}if(data.prayers&&Array.isArray(data.prayers))savePrayers(data.prayers);if(data.achievements&&Array.isArray(data.achievements))setSeenAch(data.achievements);if(data.favorites&&Array.isArray(data.favorites))setFavs(data.favorites);if(data.theme)localStorage.setItem(THEME_KEY,data.theme);loadTheme();renderJournal();renderProgress();renderAchievements();renderPrayers();renderStreakBanner();showToast('Import successful!','success')}catch(err){showToast('Invalid backup file.','error')}e.target.value=''};reader.readAsText(file)}
 function clearAllData(){if(!confirm('Permanently delete ALL data? This cannot be undone.'))return;localStorage.removeItem(ENTRIES_KEY);localStorage.removeItem(PRAYER_KEY);localStorage.removeItem(ACH_KEY);localStorage.removeItem(DRAFT_KEY);localStorage.removeItem(FAVS_KEY);renderJournal();renderProgress();renderAchievements();renderPrayers();renderStreakBanner();showToast('All data cleared.','info')}
+// ===== VOICE TRANSCRIPTION (GEMINI) =====
+let mediaRecorder;
+let audioChunks = [];
+let isRecording = false;
 
+async function toggleRecording(btn, targetId) {
+    const targetEditor = document.getElementById(targetId);
+
+    if (isRecording) {
+        // STOP RECORDING
+        mediaRecorder.stop();
+        isRecording = false;
+        btn.textContent = '⏳'; // Loading state
+        btn.style.animation = 'spin 1s linear infinite';
+        showToast('Processing audio...', 'info');
+        return;
+    }
+
+    // START RECORDING
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = event => {
+            if (event.data.size > 0) audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+            // 1. Package the audio
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            
+            // Convert Blob to Base64 so we can easily send it via JSON to Vercel
+            const reader = new FileReader();
+            reader.readAsDataURL(audioBlob);
+            reader.onloadend = async () => {
+                const base64Audio = reader.result.split(',')[1]; // Get just the base64 string
+
+                try {
+                    // 2. Send to Vercel Backend
+                    const response = await fetch('/api/transcribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ audio: base64Audio, mimeType: 'audio/webm' })
+                    });
+
+                    if (!response.ok) throw new Error('Transcription failed');
+                    const data = await response.json();
+
+                    // 3. Insert text into the editor safely
+                    const currentHtml = targetEditor.innerHTML;
+                    const spacer = (currentHtml === '' || currentHtml === '<br>') ? '' : '&nbsp;';
+                    targetEditor.innerHTML = currentHtml + spacer + data.text;
+                    
+                    updateWordCount();
+                    showToast('Transcription added!', 'success');
+                } catch (error) {
+                    console.error(error);
+                    showToast('Failed to transcribe audio.', 'error');
+                } finally {
+                    // Reset Button UI
+                    btn.textContent = '🎙️';
+                    btn.style.animation = '';
+                    btn.style.color = 'var(--pri)';
+                    btn.style.backgroundColor = 'transparent';
+                }
+            };
+
+            // Stop all microphone tracks to turn off the red recording light on the browser tab
+            stream.getTracks().forEach(track => track.stop());
+        };
+
+        mediaRecorder.start();
+        isRecording = true;
+        
+        // Update Button UI to show it's recording
+        btn.textContent = '⏹️';
+        btn.style.color = 'white';
+        btn.style.backgroundColor = 'var(--danger)';
+        btn.style.borderRadius = '50%';
+        
+    } catch (err) {
+        console.error("Microphone access denied:", err);
+        showToast('Microphone access is required.', 'error');
+    }
+}
+  
 // ===== INIT =====
 (function init(){loadTheme();switchMode();loadDraft();loadVotd();startDraftTimer();renderStreakBanner();const entries=getEntries(),stats=getStats(entries),seen=getSeenAch();ACHIEVEMENTS.forEach(a=>{if(a.check(entries,stats)&&!seen.includes(a.id))seen.push(a.id)});setSeenAch(seen);renderJournal();renderProgress();renderAchievements();renderPrayers();updateWordCount()})();
 </script>
