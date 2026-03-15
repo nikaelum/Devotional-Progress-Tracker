@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
@@ -531,7 +530,28 @@ function switchTab(tab){document.querySelectorAll('.tab-panel').forEach(p=>p.cla
 function renderStreakBanner(){const entries=getEntries();const streak=getCurrentStreak(entries);const banner=document.getElementById('streakBanner');if(streak<2){banner.innerHTML='';return}const messages=['','','Keep going!','Building a habit!','Consistency is key!','Almost a week!','Incredible!','One full week!'];const msg=streak>=7?`${streak} days strong!`:messages[Math.min(streak,7)];banner.innerHTML=`<div class="glass-card streak-banner ${streak>=7?'fire':''}"><div class="streak-flame">${streak>=7?'🔥':'✨'}</div><div class="streak-info"><strong>${streak}-Day Streak!</strong><p>${msg}</p></div><button class="streak-dismiss" onclick="this.parentElement.remove()">✕</button></div>`}
 
 // ===== MODE =====
-function switchMode(){const mode=document.getElementById('entryMode').value;const g=GUIDES[mode];document.getElementById('guideTitle').textContent=g.title;document.getElementById('guideBody').innerHTML=g.sections.map(s=>`<div class="soap-icon-wrap"><div class="soap-circle">${s.letter}</div><span class="soap-label">${s.name}</span></div>`).join('');const fields=MODE_FIELDS[mode];document.getElementById('dynamicFields').innerHTML=fields.map(f=>`<div class="form-group"><label><span class="soap-badge">${f.letter}</span> ${f.label}</label><div class="rte-wrapper"><div class="rte-toolbar"><button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('bold')">B</button><button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('italic')" style="font-style:italic">I</button><button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('underline')" style="text-decoration:underline">U</button><button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('insertUnorderedList')">•</button></div><div class="rte-editor" contenteditable="true" id="${f.id}" data-placeholder="${f.placeholder}" oninput="updateWordCount()" ${f.id==='field_freewrite'?'style="min-height:200px"':''}></div></div></div>`).join('')}
+function switchMode(){
+    const mode=document.getElementById('entryMode').value;
+    const g=GUIDES[mode];
+    document.getElementById('guideTitle').textContent=g.title;
+    document.getElementById('guideBody').innerHTML=g.sections.map(s=>`<div class="soap-icon-wrap"><div class="soap-circle">${s.letter}</div><span class="soap-label">${s.name}</span></div>`).join('');
+    const fields=MODE_FIELDS[mode];
+    
+    document.getElementById('dynamicFields').innerHTML = fields.map(f => `
+    <div class="form-group">
+        <label><span class="soap-badge">${f.letter}</span> ${f.label}</label>
+        <div class="rte-wrapper">
+            <div class="rte-toolbar">
+                <button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('bold')">B</button>
+                <button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('italic')" style="font-style:italic">I</button>
+                <button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('underline')" style="text-decoration:underline">U</button>
+                <button type="button" onmousedown="event.preventDefault()" onclick="rteCmd('insertUnorderedList')">•</button>
+                <button type="button" class="mic-btn" style="margin-left:auto; color: var(--pri);" onmousedown="event.preventDefault()" onclick="toggleRecording(this, '${f.id}')" title="Voice Type">🎙️</button>
+            </div>
+            <div class="rte-editor" contenteditable="true" id="${f.id}" data-placeholder="${f.placeholder}" oninput="updateWordCount()" ${f.id==='field_freewrite'?'style="min-height:200px"':''}></div>
+        </div>
+    </div>`).join('');
+}
 function rteCmd(cmd){document.execCommand(cmd,false,null)}
 function updateWordCount(){let total=0;document.querySelectorAll('.rte-editor').forEach(el=>{total+=wc(stripHtml(el.innerHTML||''))});total+=wc(document.getElementById('entryTitle').value||'');const rt=readTime(total);document.getElementById('totalWordCount').innerHTML=`<span>~${rt} min read</span><span class="wc-total">${total} words</span>`}
 
@@ -737,6 +757,7 @@ function showToast(msg,type='info'){const c=document.getElementById('toastContai
 function exportData(){const data={version:3,exportedAt:new Date().toISOString(),entries:getEntries(),prayers:getPrayers(),achievements:getSeenAch(),favorites:getFavs(),theme:localStorage.getItem(THEME_KEY)||'light'};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`devotions-backup-${dateStr(new Date())}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);showToast('Data exported!','success')}
 function importData(e){const file=e.target.files[0];if(!file)return;if(!confirm('This will replace ALL your current data. Continue?')){e.target.value='';return}const reader=new FileReader();reader.onload=function(ev){try{const data=JSON.parse(ev.target.result);if(!data||typeof data!=='object')throw new Error();if(data.entries&&Array.isArray(data.entries)){if(!saveEntries(data.entries)){e.target.value='';return}}if(data.prayers&&Array.isArray(data.prayers))savePrayers(data.prayers);if(data.achievements&&Array.isArray(data.achievements))setSeenAch(data.achievements);if(data.favorites&&Array.isArray(data.favorites))setFavs(data.favorites);if(data.theme)localStorage.setItem(THEME_KEY,data.theme);loadTheme();renderJournal();renderProgress();renderAchievements();renderPrayers();renderStreakBanner();showToast('Import successful!','success')}catch(err){showToast('Invalid backup file.','error')}e.target.value=''};reader.readAsText(file)}
 function clearAllData(){if(!confirm('Permanently delete ALL data? This cannot be undone.'))return;localStorage.removeItem(ENTRIES_KEY);localStorage.removeItem(PRAYER_KEY);localStorage.removeItem(ACH_KEY);localStorage.removeItem(DRAFT_KEY);localStorage.removeItem(FAVS_KEY);renderJournal();renderProgress();renderAchievements();renderPrayers();renderStreakBanner();showToast('All data cleared.','info')}
+
 // ===== VOICE TRANSCRIPTION (GEMINI) =====
 let mediaRecorder;
 let audioChunks = [];
@@ -746,16 +767,16 @@ async function toggleRecording(btn, targetId) {
     const targetEditor = document.getElementById(targetId);
 
     if (isRecording) {
-        // STOP RECORDING
+        // Stop recording
         mediaRecorder.stop();
         isRecording = false;
-        btn.textContent = '⏳'; // Loading state
+        btn.textContent = '⏳';
         btn.style.animation = 'spin 1s linear infinite';
         showToast('Processing audio...', 'info');
         return;
     }
 
-    // START RECORDING
+    // Start recording
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
@@ -766,17 +787,16 @@ async function toggleRecording(btn, targetId) {
         };
 
         mediaRecorder.onstop = async () => {
-            // 1. Package the audio
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
             
-            // Convert Blob to Base64 so we can easily send it via JSON to Vercel
+            // Convert to Base64 for the JSON payload
             const reader = new FileReader();
             reader.readAsDataURL(audioBlob);
             reader.onloadend = async () => {
-                const base64Audio = reader.result.split(',')[1]; // Get just the base64 string
+                const base64Audio = reader.result.split(',')[1];
 
                 try {
-                    // 2. Send to Vercel Backend
+                    // Send payload to Vercel Serverless Function
                     const response = await fetch('/api/transcribe', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -786,7 +806,7 @@ async function toggleRecording(btn, targetId) {
                     if (!response.ok) throw new Error('Transcription failed');
                     const data = await response.json();
 
-                    // 3. Insert text into the editor safely
+                    // Append transcribed text to the active editor
                     const currentHtml = targetEditor.innerHTML;
                     const spacer = (currentHtml === '' || currentHtml === '<br>') ? '' : '&nbsp;';
                     targetEditor.innerHTML = currentHtml + spacer + data.text;
@@ -794,10 +814,10 @@ async function toggleRecording(btn, targetId) {
                     updateWordCount();
                     showToast('Transcription added!', 'success');
                 } catch (error) {
-                    console.error(error);
+                    console.error('Transcription API Error:', error);
                     showToast('Failed to transcribe audio.', 'error');
                 } finally {
-                    // Reset Button UI
+                    // Reset button state
                     btn.textContent = '🎙️';
                     btn.style.animation = '';
                     btn.style.color = 'var(--pri)';
@@ -805,14 +825,14 @@ async function toggleRecording(btn, targetId) {
                 }
             };
 
-            // Stop all microphone tracks to turn off the red recording light on the browser tab
+            // Terminate microphone use
             stream.getTracks().forEach(track => track.stop());
         };
 
+        // Initiate recording state
         mediaRecorder.start();
         isRecording = true;
         
-        // Update Button UI to show it's recording
         btn.textContent = '⏹️';
         btn.style.color = 'white';
         btn.style.backgroundColor = 'var(--danger)';
@@ -823,7 +843,7 @@ async function toggleRecording(btn, targetId) {
         showToast('Microphone access is required.', 'error');
     }
 }
-  
+
 // ===== INIT =====
 (function init(){loadTheme();switchMode();loadDraft();loadVotd();startDraftTimer();renderStreakBanner();const entries=getEntries(),stats=getStats(entries),seen=getSeenAch();ACHIEVEMENTS.forEach(a=>{if(a.check(entries,stats)&&!seen.includes(a.id))seen.push(a.id)});setSeenAch(seen);renderJournal();renderProgress();renderAchievements();renderPrayers();updateWordCount()})();
 </script>
