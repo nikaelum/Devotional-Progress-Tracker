@@ -116,6 +116,23 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
 .entry-form-wrapper{padding:28px}
 .form-group{margin-bottom:24px}
 .form-group label{display:flex;align-items:center;gap:8px;font-size:0.85rem;font-family:var(--font-sans);color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
+/* ===== NAV TOGGLE ===== */
+.tab-nav {
+  transition: transform 0.3s ease, opacity 0.25s ease;
+}
+.tab-nav.nav-hidden {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+.nav-tap-zone {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  z-index: 9999;
+}
 input[type="text"],input[type="search"],textarea,select{width:100%;padding:16px;background:var(--input-bg);border:1px solid var(--card-brd);border-radius:var(--rad-sm);font-size:1rem;font-family:var(--font-sans);color:var(--txt);transition:all 0.3s}
 input:focus,textarea:focus,select:focus{outline:none;border-color:var(--pri);box-shadow:0 0 10px var(--pri-bg)}
 textarea{resize:vertical;min-height:90px}
@@ -1397,6 +1414,18 @@ async function toggleRecording(btn, targetId) {
         showToast('Microphone access is required.', 'error');
     }
 }
+
+// ===== NAV TOGGLE =====
+(function() {
+  const nav = document.querySelector('.tab-nav');
+  const zone = document.createElement('div');
+  zone.className = 'nav-tap-zone';
+  document.body.appendChild(zone);
+
+  zone.addEventListener('click', () => {
+    nav.classList.toggle('nav-hidden');
+  });
+})();
 
 // ===== INIT =====
 (function init(){
