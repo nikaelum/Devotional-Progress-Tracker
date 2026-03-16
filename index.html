@@ -118,20 +118,30 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
 .form-group label{display:flex;align-items:center;gap:8px;font-size:0.85rem;font-family:var(--font-sans);color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
 /* ===== NAV TOGGLE ===== */
 .tab-nav {
-  transition: transform 0.3s ease, opacity 0.25s ease;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+  will-change: transform;
 }
 .tab-nav.nav-hidden {
-  transform: translateY(100%);
+  transform: translateY(calc(100% + 40px));
   opacity: 0;
   pointer-events: none;
 }
-.nav-tap-zone {
+.nav-pull-tab {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
-  height: 20px;
-  z-index: 9999;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 5px;
+  border-radius: 5px 5px 0 0;
+  background: var(--txt3);
+  opacity: 0;
+  z-index: 101;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.nav-pull-tab.visible {
+  opacity: 0.4;
 }
 input[type="text"],input[type="search"],textarea,select{width:100%;padding:16px;background:var(--input-bg);border:1px solid var(--card-brd);border-radius:var(--rad-sm);font-size:1rem;font-family:var(--font-sans);color:var(--txt);transition:all 0.3s}
 input:focus,textarea:focus,select:focus{outline:none;border-color:var(--pri);box-shadow:0 0 10px var(--pri-bg)}
@@ -771,7 +781,7 @@ input[type="text"]:focus, input[type="search"]:focus, textarea:focus, select:foc
 </section>
 </main>
 
-<nav class="tab-nav" role="tablist">
+<nav class="tab-nav" id="tabNav" role="tablist">
     <button class="tab-btn active" onclick="switchTab('new-entry')" data-tab="new-entry" role="tab"><span class="tab-icon">✧</span><span>Study</span></button>
     <button class="tab-btn" onclick="switchTab('general')" data-tab="general" role="tab"><span class="tab-icon">✎</span><span>Diary</span></button>
     <button class="tab-btn" onclick="switchTab('journal')" data-tab="journal" role="tab"><span class="tab-icon">📖</span><span>Journal</span></button>
@@ -780,6 +790,7 @@ input[type="text"]:focus, input[type="search"]:focus, textarea:focus, select:foc
     <button class="tab-btn" onclick="switchTab('prayers')" data-tab="prayers" role="tab"><span class="tab-icon">🙏</span><span>Prayers</span></button>
     <button class="tab-btn" onclick="switchTab('achievements')" data-tab="achievements" role="tab"><span class="tab-icon">🏆</span><span>Awards</span></button>
 </nav>
+<div class="nav-pull-tab" id="navPullTab"></div>
 
 <button id="chatFab" class="chat-fab" onclick="toggleChat()" title="AI Study Buddy">✧ <span class="chat-badge" id="chatBadge" style="display:none">!</span></button>
 <div id="studyChat" class="study-chat" style="display:none">
@@ -1416,16 +1427,21 @@ async function toggleRecording(btn, targetId) {
 }
 
 // ===== NAV TOGGLE =====
-(function() {
-  const nav = document.querySelector('.tab-nav');
-  const zone = document.createElement('div');
-  zone.className = 'nav-tap-zone';
-  document.body.appendChild(zone);
+function initNavToggle() {
+    const nav = document.getElementById('tabNav') || document.querySelector('.tab-nav');
+    const pullTab = document.getElementById('navPullTab');
+    if (!nav) return;
 
-  zone.addEventListener('click', () => {
-    nav.classList.toggle('nav-hidden');
-  });
-})();
+    const EDGE_ZONE = 30; // px from bottom of screen
+
+    document.addEventListener('touchstart', (e) => {
+        const touchY = e.touches[0].clientY;
+        if (touchY > window.innerHeight - EDGE_ZONE) {
+            nav.classList.toggle('nav-hidden');
+            if (pullTab) pullTab.classList.toggle('visible', nav.classList.contains('nav-hidden'));
+        }
+    }, { passive: true });
+}
 
 // ===== INIT =====
 (function init(){
@@ -1435,6 +1451,7 @@ async function toggleRecording(btn, targetId) {
     loadVotd();
     startDraftTimer();
     renderStreakBanner();
+    initNavToggle();
     
     if(currentChatHistory.length === 0) {
         currentChatHistory = getInitialChat();
