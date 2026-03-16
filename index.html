@@ -5,13 +5,6 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>✝ Devotional Tracker</title>
-    <meta name="apple-mobile-web-app-title" content="Devotions">
-<meta name="application-name" content="Devotions">
-
-<link rel="icon" type="image/png" href="/icon-v2.png">
-<link rel="apple-touch-icon" href="/icon-v2.png">
-
-<link rel="manifest" href="/manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -597,13 +590,68 @@ function loadTheme(){const t=localStorage.getItem(THEME_KEY)||'light';document.d
 function toggleKbdHelp(){const el=document.getElementById('kbdHelp');el.style.display=el.style.display==='block'?'none':'block'}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeModal();closeAchPopup();document.getElementById('kbdHelp').style.display='none';return}if(!e.ctrlKey&&!e.metaKey)return;switch(e.key.toLowerCase()){case 's':e.preventDefault();if(document.getElementById('tab-new-entry').classList.contains('active'))document.getElementById('entryForm').requestSubmit();break;case 'n':e.preventDefault();cancelEdit();switchTab('new-entry');document.getElementById('entryTitle').focus();break;case 'j':e.preventDefault();switchTab('journal');break;case 'k':e.preventDefault();switchTab('journal');setTimeout(()=>document.getElementById('journalSearch').focus(),100);break}});
 
+// ===== SWIPE GESTURES =====
+const TAB_ORDER = ['new-entry', 'general', 'journal', 'progress', 'chat', 'prayers', 'achievements'];
+let touchStartX = null;
+let touchStartY = null;
+let touchEndX = null;
+let touchEndY = null;
+
+const mainContent = document.querySelector('.main-content');
+
+mainContent.addEventListener('touchstart', e => {
+    // Ignore horizontal scrolling areas
+    if (e.target.closest('.heatmap-wrapper') || e.target.closest('.tab-nav')) {
+        touchStartX = null;
+        return;
+    }
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+mainContent.addEventListener('touchend', e => {
+    if (touchStartX === null) return;
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+    handleSwipe();
+}, { passive: true });
+
+function handleSwipe() {
+    const swipeThreshold = 50; 
+    const diffX = touchStartX - touchEndX;
+    const diffY = touchStartY - touchEndY;
+
+    // Check if it's primarily a horizontal swipe
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > swipeThreshold) {
+        const currentTabEl = document.querySelector('.tab-panel.active');
+        if (!currentTabEl) return;
+        const currentTabId = currentTabEl.id.replace('tab-', '');
+        const currentIndex = TAB_ORDER.indexOf(currentTabId);
+        
+        if (diffX > 0) { // Swiped left -> Go to Next Tab
+            if (currentIndex < TAB_ORDER.length - 1) {
+                switchTab(TAB_ORDER[currentIndex + 1]);
+            }
+        } else {         // Swiped right -> Go to Previous Tab
+            if (currentIndex > 0) {
+                switchTab(TAB_ORDER[currentIndex - 1]);
+            }
+        }
+    }
+}
+
 // ===== TABS =====
 function switchTab(tab){
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById('tab-'+tab).classList.add('active');
     const btn=document.querySelector(`.tab-btn[data-tab="${tab}"]`);
-    if(btn) btn.classList.add('active');
+    
+    if(btn) {
+        btn.classList.add('active');
+        // Ensure active tab button scrolls into view on mobile
+        btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
     
     if(tab==='journal')renderJournal();
     if(tab==='progress')renderProgress();
@@ -675,7 +723,6 @@ function useVotd(){const card=document.getElementById('votdCard');document.getEl
 
 // ===== MARKDOWN =====
 function formatMarkdown(text){if(!text)return'';return text.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}
-
 
 // ===== UNIFIED CHAT LOGIC =====
 function getInitialChat() {
@@ -982,7 +1029,6 @@ async function toggleRecording(btn, targetId) {
     const targetEditor = document.getElementById(targetId);
 
     if (isRecording) {
-        // Stop recording
         mediaRecorder.stop();
         isRecording = false;
         btn.textContent = '⏳';
@@ -991,7 +1037,6 @@ async function toggleRecording(btn, targetId) {
         return;
     }
 
-    // Start recording
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
@@ -1003,25 +1048,19 @@ async function toggleRecording(btn, targetId) {
 
         mediaRecorder.onstop = async () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            
-            // Convert to Base64 for the JSON payload
             const reader = new FileReader();
             reader.readAsDataURL(audioBlob);
             reader.onloadend = async () => {
                 const base64Audio = reader.result.split(',')[1];
-
                 try {
-                    // Send payload to Vercel Serverless Function
                     const response = await fetch('/api/transcribe', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ audio: base64Audio, mimeType: 'audio/webm' })
                     });
-
                     if (!response.ok) throw new Error('Transcription failed');
                     const data = await response.json();
-
-                    // Append transcribed text to the active editor
+                    
                     const currentHtml = targetEditor.innerHTML;
                     const spacer = (currentHtml === '' || currentHtml === '<br>') ? '' : '&nbsp;';
                     targetEditor.innerHTML = currentHtml + spacer + data.text;
@@ -1032,22 +1071,17 @@ async function toggleRecording(btn, targetId) {
                     console.error('Transcription API Error:', error);
                     showToast('Failed to transcribe audio.', 'error');
                 } finally {
-                    // Reset button state
                     btn.textContent = '🎙️';
                     btn.style.animation = '';
                     btn.style.color = 'var(--pri)';
                     btn.style.backgroundColor = 'transparent';
                 }
             };
-
-            // Terminate microphone use
             stream.getTracks().forEach(track => track.stop());
         };
 
-        // Initiate recording state
         mediaRecorder.start();
         isRecording = true;
-        
         btn.textContent = '⏹️';
         btn.style.color = 'white';
         btn.style.backgroundColor = 'var(--danger)';
