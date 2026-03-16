@@ -22,7 +22,7 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
 .theme-toggle,.kbd-toggle{background:var(--card-bg);border:1px solid var(--card-brd);color:var(--txt);width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s;backdrop-filter:var(--glass-blur);box-shadow:var(--sh-glow)}
 .theme-toggle:hover,.kbd-toggle:hover{transform:scale(1.05);color:var(--pri);border-color:var(--pri)}
 
-/* Tab Nav - fixed, non-scrollable, fits all tabs */
+/* Tab Nav - scrollable, fits all tabs */
 .tab-nav {
   display: flex;
   background: var(--card-bg);
@@ -38,25 +38,27 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
   margin: 0 auto;
   border-radius: 0;
   box-shadow: 0 -2px 20px rgba(0,0,0,0.08);
-  padding: 4px 2px calc(4px + env(safe-area-inset-bottom, 0px)) 2px;
-  overflow: hidden;
+  padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px)) 4px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   flex-wrap: nowrap;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: stretch;
+  gap: 2px;
+  scrollbar-width: none;          /* Firefox */
+  -ms-overflow-style: none;       /* IE/Edge */
 }
 
 .tab-nav::-webkit-scrollbar { display: none; }
 
 .tab-btn {
-  flex: 1 1 0;
-  min-width: 0;
-  max-width: none;
-  flex-shrink: 1;
-  padding: 6px 0 2px;
+  flex: 0 0 auto;
+  min-width: 60px;
+  padding: 6px 10px 4px;
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 0.55rem;
+  font-size: 0.6rem;
   font-weight: 500;
   color: var(--txt2);
   transition: all 0.3s;
@@ -66,11 +68,10 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
   gap: 2px;
   border-radius: 8px;
   font-family: inherit;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none;
+  letter-spacing: 0.2px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
 }
 
 .tab-btn .tab-icon {
@@ -595,7 +596,14 @@ input[type="text"]:focus, input[type="search"]:focus, textarea:focus, select:foc
 .prayer-add-btn { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
 .prayer-add-btn:active { transform: scale(0.9) rotate(-20deg); }
 
-@media(max-width:480px){.study-chat{width:calc(100vw - 32px);right:16px;bottom:calc(120px + env(safe-area-inset-bottom))}.chat-fab{right:16px;bottom:calc(70px + env(safe-area-inset-bottom));width:48px;height:48px;font-size:1.2rem}.app-header{padding:24px 16px 12px}.header-titles h1{font-size:1.8rem}.tab-btn{font-size:0.5rem;letter-spacing:0.3px;padding:5px 0 2px}.tab-btn .tab-icon{font-size:1rem}}
+@media(max-width:480px){
+  .study-chat{width:calc(100vw - 32px);right:16px;bottom:calc(120px + env(safe-area-inset-bottom))}
+  .chat-fab{right:16px;bottom:calc(70px + env(safe-area-inset-bottom));width:48px;height:48px;font-size:1.2rem}
+  .app-header{padding:24px 16px 12px}
+  .header-titles h1{font-size:1.8rem}
+  .tab-btn{font-size:0.55rem;letter-spacing:0.1px;padding:5px 8px 3px;min-width:52px}
+  .tab-btn .tab-icon{font-size:1rem}
+}
 </style>
 </head>
 <body>
@@ -985,7 +993,8 @@ function switchTab(tab){
         // Re-trigger icon bounce
         const icon = btn.querySelector('.tab-icon');
         if(icon){ icon.style.animation='none'; icon.offsetHeight; icon.style.animation=''; }
-        // No scrollIntoView needed — all tabs visible
+        // Scroll tab into view if partially hidden
+        btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
     
     if(tab==='journal')renderJournal();
