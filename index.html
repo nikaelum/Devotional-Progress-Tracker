@@ -121,14 +121,16 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
   transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
   will-change: transform;
 }
+
 .tab-nav.nav-hidden {
   transform: translateY(calc(100% + 40px));
   opacity: 0;
   pointer-events: none;
 }
+
 .nav-pull-tab {
   position: fixed;
-  bottom: 28px;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   width: 40px;
@@ -140,6 +142,7 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
+
 .nav-pull-tab.visible {
   opacity: 0.4;
 }
@@ -1432,7 +1435,12 @@ function initNavToggle() {
     const pullTab = document.getElementById('navPullTab');
     if (!nav) return;
 
-    const EDGE_ZONE = 60; // px from bottom of screen (raised above Siri gesture bar)
+    // After the entrance animation finishes, clear it so CSS transitions can take over
+    nav.addEventListener('animationend', () => {
+        nav.style.animation = 'none';
+    }, { once: true });
+
+    const EDGE_ZONE = 30; // px from bottom of screen
 
     document.addEventListener('touchstart', (e) => {
         const touchY = e.touches[0].clientY;
