@@ -128,7 +128,7 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
 }
 .nav-pull-tab {
   position: fixed;
-  bottom: 0;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
   width: 40px;
@@ -1432,7 +1432,7 @@ function initNavToggle() {
     const pullTab = document.getElementById('navPullTab');
     if (!nav) return;
 
-    const EDGE_ZONE = 30; // px from bottom of screen
+    const EDGE_ZONE = 60; // px from bottom of screen (raised above Siri gesture bar)
 
     document.addEventListener('touchstart', (e) => {
         const touchY = e.touches[0].clientY;
