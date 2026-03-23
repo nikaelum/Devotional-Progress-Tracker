@@ -5,11 +5,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>✝ Devotional Tracker</title>
-<!-- The standard favicon -->
 <link rel="icon" type="image/png" href="/icon.png?v=3">
-<!-- For iPhones / Apple devices -->
 <link rel="apple-touch-icon" href="/icon.png?v=3">
-<!-- Linking your Web App Manifest -->
 <link rel="manifest" href="/manifest.json">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap');
@@ -27,77 +24,12 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
 .header-controls{display:flex;gap:8px}
 .theme-toggle,.kbd-toggle{background:var(--card-bg);border:1px solid var(--card-brd);color:var(--txt);width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all 0.3s;backdrop-filter:var(--glass-blur);box-shadow:var(--sh-glow)}
 .theme-toggle:hover,.kbd-toggle:hover{transform:scale(1.05);color:var(--pri);border-color:var(--pri)}
-
-/* Tab Nav - scrollable, fits all tabs */
-.tab-nav {
-  display: flex;
-  background: var(--card-bg);
-  border: 1px solid var(--card-brd);
-  backdrop-filter: var(--glass-blur);
-  position: fixed;
-  bottom: env(safe-area-inset-bottom, 0px);
-  left: 0;
-  right: 0;
-  z-index: 100;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  border-radius: 0;
-  box-shadow: 0 -2px 20px rgba(0,0,0,0.08);
-  padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px)) 4px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  flex-wrap: nowrap;
-  justify-content: flex-start;
-  align-items: stretch;
-  gap: 2px;
-  scrollbar-width: none;          /* Firefox */
-  -ms-overflow-style: none;       /* IE/Edge */
-}
-
-.tab-nav::-webkit-scrollbar { display: none; }
-
-.tab-btn {
-  flex: 0 0 auto;
-  min-width: 60px;
-  padding: 6px 10px 4px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.6rem;
-  font-weight: 500;
-  color: var(--txt2);
-  transition: all 0.3s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  border-radius: 8px;
-  font-family: inherit;
-  text-transform: none;
-  letter-spacing: 0.2px;
-  white-space: nowrap;
-  overflow: visible;
-}
-
-.tab-btn .tab-icon {
-  font-size: 1.1rem;
-  margin-bottom: 1px;
-  transition: all 0.3s;
-  filter: grayscale(100%) opacity(0.5);
-}
-
-.tab-btn.active {
-  color: var(--pri);
-  background: var(--pri-bg);
-}
-
-.tab-btn.active .tab-icon {
-  filter: none;
-  transform: scale(1.1);
-  text-shadow: 0 0 10px var(--pri);
-}
-
+.tab-nav{display:flex;background:var(--card-bg);border:1px solid var(--card-brd);backdrop-filter:var(--glass-blur);position:fixed;bottom:env(safe-area-inset-bottom,0px);left:0;right:0;z-index:100;width:100%;max-width:600px;margin:0 auto;border-radius:0;box-shadow:0 -2px 20px rgba(0,0,0,0.08);padding:4px 4px calc(4px + env(safe-area-inset-bottom,0px)) 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;justify-content:flex-start;align-items:stretch;gap:2px;scrollbar-width:none;-ms-overflow-style:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{flex:0 0 auto;min-width:60px;padding:6px 10px 4px;border:none;background:transparent;cursor:pointer;font-size:0.6rem;font-weight:500;color:var(--txt2);transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:8px;font-family:inherit;text-transform:none;letter-spacing:0.2px;white-space:nowrap;overflow:visible}
+.tab-btn .tab-icon{font-size:1.1rem;margin-bottom:1px;transition:all 0.3s;filter:grayscale(100%) opacity(0.5)}
+.tab-btn.active{color:var(--pri);background:var(--pri-bg)}
+.tab-btn.active .tab-icon{filter:none;transform:scale(1.1);text-shadow:0 0 10px var(--pri)}
 .main-content{max-width:700px;margin:0 auto;padding:0 20px calc(80px + env(safe-area-inset-bottom));position:relative;z-index:5}
 .tab-panel{display:none;animation:floatUp 0.6s cubic-bezier(0.2,0.8,0.2,1) forwards;opacity:0}
 .tab-panel.active{display:block}
@@ -123,36 +55,10 @@ h1,h2,h3,h4,.serif{font-family:var(--font-serif);font-weight:600}
 .entry-form-wrapper{padding:28px}
 .form-group{margin-bottom:24px}
 .form-group label{display:flex;align-items:center;gap:8px;font-size:0.85rem;font-family:var(--font-sans);color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
-/* ===== NAV TOGGLE ===== */
-.tab-nav {
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
-  will-change: transform;
-}
-
-.tab-nav.nav-hidden {
-  transform: translateY(calc(100% + 40px));
-  opacity: 0;
-  pointer-events: none;
-}
-
-.nav-pull-tab {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 5px;
-  border-radius: 5px 5px 0 0;
-  background: var(--txt3);
-  opacity: 0;
-  z-index: 101;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.nav-pull-tab.visible {
-  opacity: 0.4;
-}
+.tab-nav{transition:transform 0.35s cubic-bezier(0.2,0.8,0.2,1),opacity 0.3s ease;will-change:transform}
+.tab-nav.nav-hidden{transform:translateY(calc(100% + 40px));opacity:0;pointer-events:none}
+.nav-pull-tab{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:40px;height:5px;border-radius:5px 5px 0 0;background:var(--txt3);opacity:0;z-index:101;transition:opacity 0.3s ease;pointer-events:none}
+.nav-pull-tab.visible{opacity:0.4}
 input[type="text"],input[type="search"],textarea,select{width:100%;padding:16px;background:var(--input-bg);border:1px solid var(--card-brd);border-radius:var(--rad-sm);font-size:1rem;font-family:var(--font-sans);color:var(--txt);transition:all 0.3s}
 input:focus,textarea:focus,select:focus{outline:none;border-color:var(--pri);box-shadow:0 0 10px var(--pri-bg)}
 textarea{resize:vertical;min-height:90px}
@@ -359,257 +265,119 @@ textarea{resize:vertical;min-height:90px}
 .kbd-help kbd{background:var(--input-bg);border:1px solid var(--card-brd);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-family:monospace;color:var(--txt);margin-left:12px}
 .kbd-help .kbd-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px}
 .kbd-help .kbd-row:last-child{margin-bottom:0}
-
-/* New Elements */
-.chat-tab-container { display: flex; flex-direction: column; height: calc(100vh - 280px); min-height: 400px; }
-.chat-tab-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; background: var(--input-bg); border-radius: var(--rad-sm); border: 1px solid var(--card-brd); margin-bottom: 16px; }
-.general-date-time { text-align: center; color: var(--txt2); font-size: 0.95rem; margin-bottom: 24px; font-style: italic; font-family: var(--font-serif); border-bottom: 1px solid var(--card-brd); padding-bottom: 12px; }
-
-/* ============================================================
-   ENHANCED ANIMATIONS
-   ============================================================ */
-
-/* --- Respect reduced motion --- */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
-
-/* --- Keyframes --- */
-@keyframes floatUpStagger { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeScaleIn    { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: scale(1); } }
-@keyframes shimmer        { 0% { background-position: -200% center; } 100% { background-position: 200% center; } }
-@keyframes pulseRing      { 0% { box-shadow: 0 0 0 0 rgba(var(--pri-rgb, 184,144,71), 0.35); } 70% { box-shadow: 0 0 0 10px rgba(var(--pri-rgb, 184,144,71), 0); } 100% { box-shadow: 0 0 0 0 rgba(var(--pri-rgb, 184,144,71), 0); } }
-@keyframes iconBounce     { 0%, 100% { transform: translateY(0) scale(1); } 40% { transform: translateY(-6px) scale(1.15); } 60% { transform: translateY(-3px) scale(1.08); } }
-@keyframes streakFlame    { 0%, 100% { transform: scale(1) rotate(-3deg); } 50% { transform: scale(1.12) rotate(3deg); } }
-@keyframes votdReveal     { from { opacity: 0; transform: translateY(12px); letter-spacing: -1px; } to { opacity: 1; transform: translateY(0); letter-spacing: normal; } }
-@keyframes cardSlideIn    { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes checkPop       { 0% { transform: scale(1); } 30% { transform: scale(1.35); } 60% { transform: scale(0.9); } 100% { transform: scale(1); } }
-@keyframes fabFloat       { 0%, 100% { transform: translateY(0); box-shadow: var(--sh-glow); } 50% { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(184,144,71,0.18); } }
-@keyframes tabNavEnter    { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes progressFill   { from { width: 0; } }
-@keyframes countUp        { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes ripple         { from { transform: scale(0); opacity: 0.5; } to { transform: scale(4); opacity: 0; } }
-@keyframes headerEntrance { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes glowPulse      { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-@keyframes toastSlideIn   { from { opacity: 0; transform: translateX(100%) scale(0.9); } to { opacity: 1; transform: translateX(0) scale(1); } }
-@keyframes toastSlideOut  { from { opacity: 1; transform: translateX(0) scale(1); } to { opacity: 0; transform: translateX(100%) scale(0.9); } }
-@keyframes modalSlideUp   { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes overlayFadeIn  { from { opacity: 0; backdrop-filter: blur(0px); } to { opacity: 1; backdrop-filter: blur(8px); } }
-@keyframes msgPop         { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
-@keyframes achUnlock      { 0% { transform: scale(0.7) rotate(-8deg); opacity: 0; } 60% { transform: scale(1.1) rotate(2deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
-@keyframes draftPulse     { 0%, 100% { border-color: var(--pri); } 50% { border-color: var(--warn); box-shadow: 0 0 12px rgba(201,154,92,0.3); } }
-@keyframes tagAppear      { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
-@keyframes statReveal     { from { opacity: 0; transform: scale(0.8) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-
-/* --- Header entrance --- */
-.app-header {
-  animation: headerEntrance 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-.app-header .header-titles h1 { animation: headerEntrance 0.6s 0.08s cubic-bezier(0.2,0.8,0.2,1) both; }
-.app-header .header-titles .subtitle { animation: headerEntrance 0.6s 0.16s cubic-bezier(0.2,0.8,0.2,1) both; }
-.header-controls .kbd-toggle  { animation: fadeScaleIn 0.4s 0.2s cubic-bezier(0.2,0.8,0.2,1) both; }
-.header-controls .theme-toggle { animation: fadeScaleIn 0.4s 0.28s cubic-bezier(0.2,0.8,0.2,1) both; }
-
-/* --- Tab nav entrance --- */
-.tab-nav { animation: tabNavEnter 0.5s 0.1s cubic-bezier(0.16,1,0.3,1) both; }
-
-/* --- Tab button press ripple --- */
-.tab-btn { position: relative; overflow: hidden; }
-.tab-btn::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  background: radial-gradient(circle, var(--pri-bg) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s;
-  pointer-events: none;
-}
-.tab-btn:active::after { opacity: 1; }
-.tab-btn.active .tab-icon { animation: iconBounce 0.5s cubic-bezier(0.2,0.8,0.2,1); }
-
-/* --- Tab panel transitions --- */
-.tab-panel { animation: floatUpStagger 0.55s cubic-bezier(0.2,0.8,0.2,1) both; }
-
-/* --- Glass cards stagger on entry --- */
-.tab-panel.active .glass-card {
-  animation: floatUpStagger 0.5s cubic-bezier(0.2,0.8,0.2,1) both;
-}
-.tab-panel.active .glass-card:nth-child(1) { animation-delay: 0.04s; }
-.tab-panel.active .glass-card:nth-child(2) { animation-delay: 0.1s; }
-.tab-panel.active .glass-card:nth-child(3) { animation-delay: 0.16s; }
-.tab-panel.active .glass-card:nth-child(4) { animation-delay: 0.22s; }
-.tab-panel.active .glass-card:nth-child(5) { animation-delay: 0.28s; }
-
-/* --- Glass card hover lift --- */
-.glass-card {
-  transition: transform 0.28s cubic-bezier(0.2,0.8,0.2,1), box-shadow 0.28s cubic-bezier(0.2,0.8,0.2,1), border-color 0.28s;
-  will-change: transform;
-}
-.glass-card:hover {
-  transform: translateY(-3px) scale(1.005);
-  box-shadow: 0 16px 48px rgba(184,144,71,0.13);
-  border-color: rgba(184,144,71,0.3);
-}
-
-/* --- VOTD verse shimmer reveal --- */
-.votd-card { animation: fadeScaleIn 0.7s cubic-bezier(0.2,0.8,0.2,1) both; }
-.votd-text  { animation: votdReveal 0.9s 0.2s cubic-bezier(0.2,0.8,0.2,1) both; }
-.votd-ref   { animation: votdReveal 0.7s 0.45s cubic-bezier(0.2,0.8,0.2,1) both; }
-.votd-btn   { animation: fadeScaleIn 0.5s 0.65s cubic-bezier(0.2,0.8,0.2,1) both; }
-.votd-card::before, .votd-card::after { animation: glowPulse 3s ease-in-out infinite; }
-
-/* --- Streak banner --- */
-.streak-banner { animation: cardSlideIn 0.5s cubic-bezier(0.2,0.8,0.2,1) both; }
-.streak-banner .streak-flame { animation: streakFlame 1.6s ease-in-out infinite; display: inline-block; }
-
-/* --- Draft indicator pulse --- */
-.draft-indicator { animation: draftPulse 2.5s ease-in-out infinite; }
-
-/* --- Buttons: ripple on tap --- */
-.btn-primary, .btn-secondary, .btn-danger, .btn-edit, .fetch-btn, .votd-btn {
-  position: relative;
-  overflow: hidden;
-}
-.btn-primary::after, .btn-secondary::after, .btn-danger::after, .btn-edit::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0; left: 0;
-  pointer-events: none;
-  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 60%);
-  transform: scale(0);
-  opacity: 0;
-  border-radius: inherit;
-  transition: transform 0.5s, opacity 0.5s;
-}
-.btn-primary:active::after, .btn-secondary:active::after,
-.btn-danger:active::after, .btn-edit:active::after {
-  transform: scale(2.5);
-  opacity: 1;
-  transition: 0s;
-}
-.btn-primary:active { transform: translateY(1px) scale(0.98); }
-.btn-secondary:active, .btn-danger:active, .btn-edit:active { transform: scale(0.97); }
-
-/* --- Form inputs focus glow --- */
-input[type="text"]:focus, input[type="search"]:focus, textarea:focus, select:focus {
-  transform: translateY(-1px);
-  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
-}
-
-/* --- Tag pills pop in --- */
-.tag-pill { animation: tagAppear 0.25s cubic-bezier(0.34,1.56,0.64,1) both; }
-
-/* --- Journal list items stagger --- */
-#journalList .glass-card, #generalList .glass-card {
-  animation: cardSlideIn 0.4s cubic-bezier(0.2,0.8,0.2,1) both;
-}
-
-/* --- List item hover --- */
-.list-item { transition: transform 0.25s cubic-bezier(0.2,0.8,0.2,1), box-shadow 0.25s; }
-.list-item:active { transform: scale(0.98); }
-
-/* --- Stats numbers reveal --- */
-.stat-card { animation: statReveal 0.5s cubic-bezier(0.2,0.8,0.2,1) both; }
-.stat-card:nth-child(1) { animation-delay: 0.05s; }
-.stat-card:nth-child(2) { animation-delay: 0.12s; }
-.stat-card:nth-child(3) { animation-delay: 0.19s; }
-.stat-card:nth-child(4) { animation-delay: 0.26s; }
-.stat-card .stat-value  { animation: countUp 0.6s 0.3s cubic-bezier(0.2,0.8,0.2,1) both; }
-
-/* --- Progress / achievement bars animate width --- */
-.ach-prog-fill, .ach-progress-fill, .time-bar-fill {
-  animation: progressFill 1s cubic-bezier(0.4,0,0.2,1) both;
-}
-
-/* --- Achievement card unlocked glow --- */
-.ach-card.unlocked {
-  animation: fadeScaleIn 0.45s cubic-bezier(0.2,0.8,0.2,1) both;
-  transition: transform 0.28s, box-shadow 0.28s;
-}
-.ach-card.unlocked:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 36px rgba(184,144,71,0.18); }
-.ach-card.locked { transition: opacity 0.3s, filter 0.3s; }
-.ach-card.locked:hover { opacity: 0.8; filter: grayscale(0.5); }
-.ach-icon { transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.ach-card.unlocked:hover .ach-icon { transform: scale(1.2) rotate(8deg); }
-
-/* --- Achievement popup --- */
-.ach-popup-content { animation: achUnlock 0.6s cubic-bezier(0.17,0.67,0.42,1.2) both; }
-.ach-popup-icon    { animation: bounce 2s ease infinite, iconBounce 0.6s 0.2s cubic-bezier(0.2,0.8,0.2,1); }
-
-/* --- Modal overlay & content --- */
-.modal-overlay { animation: overlayFadeIn 0.3s ease both; transition: opacity 0.3s; }
-.modal-content { animation: modalSlideUp 0.42s cubic-bezier(0.16,1,0.3,1) both; }
-
-/* --- Toast notifications --- */
-.toast { animation: toastSlideIn 0.4s cubic-bezier(0.16,1,0.3,1) both, toastSlideOut 0.4s 3s cubic-bezier(0.4,0,1,1) forwards; }
-
-/* --- FAB idle float --- */
-.chat-fab { animation: fabFloat 3.5s ease-in-out infinite; }
-.chat-fab:hover { animation: none; transform: scale(1.12) rotate(12deg); background: var(--pri); color: #fff; }
-.chat-fab:active { transform: scale(0.94); animation: none; }
-
-/* --- Chat messages pop in --- */
-.chat-msg { animation: msgPop 0.3s cubic-bezier(0.2,0.8,0.2,1) both; }
-.chat-msg.user { transform-origin: right bottom; }
-.chat-msg.ai   { transform-origin: left bottom; }
-
-/* --- Prayer checkbox checked pop --- */
-.prayer-checkbox.checked { animation: checkPop 0.35s cubic-bezier(0.34,1.56,0.64,1); }
-
-/* --- Prayer item answered cross-out transition --- */
-.prayer-item .list-title { transition: text-decoration 0.3s, color 0.3s; }
-
-/* --- Filter tag transition --- */
-.filter-tag { transition: background 0.25s, color 0.25s, border-color 0.25s, transform 0.2s; }
-.filter-tag:active { transform: scale(0.95); }
-
-/* --- Segmented control active slide --- */
-.segmented-btn { transition: background 0.3s, color 0.3s, box-shadow 0.3s, transform 0.2s; }
-.segmented-btn:active { transform: scale(0.96); }
-
-/* --- Theme toggle spin --- */
-.theme-toggle { transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1), color 0.3s, border-color 0.3s; }
-.theme-toggle:active { transform: scale(0.9) rotate(-30deg); }
-.theme-toggle.spinning { animation: spin 0.5s cubic-bezier(0.4,0,0.2,1); }
-
-/* --- SOAP circles hover pulse --- */
-.soap-circle { transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s; }
-.soap-circle:hover { transform: scale(1.1); box-shadow: 0 0 16px var(--pri-bg); }
-
-/* --- Cloud words hover --- */
-.cloud-word { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s; }
-.cloud-word:hover { transform: scale(1.18) rotate(-2deg); }
-
-/* --- Chat panel open animation --- */
-.study-chat { transform-origin: bottom right; }
-
-/* --- Heatmap cell hover enhanced --- */
-.heatmap-cell { transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s; }
-.heatmap-cell:hover { transform: scale(1.5); }
-
-/* --- Time bar fill animation --- */
-.time-bar-fill { transition: height 1s cubic-bezier(0.4,0,0.2,1); }
-
-/* --- Image upload area hover --- */
-.img-upload-area { transition: background 0.3s, border-style 0.3s, transform 0.2s; }
-.img-upload-area:hover { transform: scale(1.01); }
-.img-upload-area:active { transform: scale(0.99); }
-
-/* --- Prayer add btn ripple --- */
-.prayer-add-btn { transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
-.prayer-add-btn:active { transform: scale(0.9) rotate(-20deg); }
-
-@media(max-width:480px){
-  .study-chat{width:calc(100vw - 32px);right:16px;bottom:calc(120px + env(safe-area-inset-bottom))}
-  .chat-fab{right:16px;bottom:calc(70px + env(safe-area-inset-bottom));width:48px;height:48px;font-size:1.2rem}
-  .app-header{padding:24px 16px 12px}
-  .header-titles h1{font-size:1.8rem}
-  .tab-btn{font-size:0.55rem;letter-spacing:0.1px;padding:5px 8px 3px;min-width:52px}
-  .tab-btn .tab-icon{font-size:1rem}
-}
+.chat-tab-container{display:flex;flex-direction:column;height:calc(100vh - 280px);min-height:400px}
+.chat-tab-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;background:var(--input-bg);border-radius:var(--rad-sm);border:1px solid var(--card-brd);margin-bottom:16px}
+.general-date-time{text-align:center;color:var(--txt2);font-size:0.95rem;margin-bottom:24px;font-style:italic;font-family:var(--font-serif);border-bottom:1px solid var(--card-brd);padding-bottom:12px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+@keyframes floatUpStagger{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeScaleIn{from{opacity:0;transform:scale(0.94)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes pulseRing{0%{box-shadow:0 0 0 0 rgba(var(--pri-rgb,184,144,71),0.35)}70%{box-shadow:0 0 0 10px rgba(var(--pri-rgb,184,144,71),0)}100%{box-shadow:0 0 0 0 rgba(var(--pri-rgb,184,144,71),0)}}
+@keyframes iconBounce{0%,100%{transform:translateY(0) scale(1)}40%{transform:translateY(-6px) scale(1.15)}60%{transform:translateY(-3px) scale(1.08)}}
+@keyframes streakFlame{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.12) rotate(3deg)}}
+@keyframes votdReveal{from{opacity:0;transform:translateY(12px);letter-spacing:-1px}to{opacity:1;transform:translateY(0);letter-spacing:normal}}
+@keyframes cardSlideIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+@keyframes checkPop{0%{transform:scale(1)}30%{transform:scale(1.35)}60%{transform:scale(0.9)}100%{transform:scale(1)}}
+@keyframes fabFloat{0%,100%{transform:translateY(0);box-shadow:var(--sh-glow)}50%{transform:translateY(-4px);box-shadow:0 16px 40px rgba(184,144,71,0.18)}}
+@keyframes tabNavEnter{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes progressFill{from{width:0}}
+@keyframes countUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes ripple{from{transform:scale(0);opacity:0.5}to{transform:scale(4);opacity:0}}
+@keyframes headerEntrance{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glowPulse{0%,100%{opacity:0.5}50%{opacity:1}}
+@keyframes toastSlideIn{from{opacity:0;transform:translateX(100%) scale(0.9)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes toastSlideOut{from{opacity:1;transform:translateX(0) scale(1)}to{opacity:0;transform:translateX(100%) scale(0.9)}}
+@keyframes modalSlideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes overlayFadeIn{from{opacity:0;backdrop-filter:blur(0px)}to{opacity:1;backdrop-filter:blur(8px)}}
+@keyframes msgPop{from{opacity:0;transform:translateY(10px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes achUnlock{0%{transform:scale(0.7) rotate(-8deg);opacity:0}60%{transform:scale(1.1) rotate(2deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes draftPulse{0%,100%{border-color:var(--pri)}50%{border-color:var(--warn);box-shadow:0 0 12px rgba(201,154,92,0.3)}}
+@keyframes tagAppear{from{opacity:0;transform:scale(0.7)}to{opacity:1;transform:scale(1)}}
+@keyframes statReveal{from{opacity:0;transform:scale(0.8) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.app-header{animation:headerEntrance 0.5s cubic-bezier(0.2,0.8,0.2,1) both}
+.app-header .header-titles h1{animation:headerEntrance 0.6s 0.08s cubic-bezier(0.2,0.8,0.2,1) both}
+.app-header .header-titles .subtitle{animation:headerEntrance 0.6s 0.16s cubic-bezier(0.2,0.8,0.2,1) both}
+.header-controls .kbd-toggle{animation:fadeScaleIn 0.4s 0.2s cubic-bezier(0.2,0.8,0.2,1) both}
+.header-controls .theme-toggle{animation:fadeScaleIn 0.4s 0.28s cubic-bezier(0.2,0.8,0.2,1) both}
+.tab-nav{animation:tabNavEnter 0.5s 0.1s cubic-bezier(0.16,1,0.3,1) both}
+.tab-btn{position:relative;overflow:hidden}
+.tab-btn::after{content:'';position:absolute;inset:0;border-radius:8px;background:radial-gradient(circle,var(--pri-bg) 0%,transparent 70%);opacity:0;transition:opacity 0.3s;pointer-events:none}
+.tab-btn:active::after{opacity:1}
+.tab-btn.active .tab-icon{animation:iconBounce 0.5s cubic-bezier(0.2,0.8,0.2,1)}
+.tab-panel{animation:floatUpStagger 0.55s cubic-bezier(0.2,0.8,0.2,1) both}
+.tab-panel.active .glass-card{animation:floatUpStagger 0.5s cubic-bezier(0.2,0.8,0.2,1) both}
+.tab-panel.active .glass-card:nth-child(1){animation-delay:0.04s}
+.tab-panel.active .glass-card:nth-child(2){animation-delay:0.1s}
+.tab-panel.active .glass-card:nth-child(3){animation-delay:0.16s}
+.tab-panel.active .glass-card:nth-child(4){animation-delay:0.22s}
+.tab-panel.active .glass-card:nth-child(5){animation-delay:0.28s}
+.glass-card{transition:transform 0.28s cubic-bezier(0.2,0.8,0.2,1),box-shadow 0.28s cubic-bezier(0.2,0.8,0.2,1),border-color 0.28s;will-change:transform}
+.glass-card:hover{transform:translateY(-3px) scale(1.005);box-shadow:0 16px 48px rgba(184,144,71,0.13);border-color:rgba(184,144,71,0.3)}
+.votd-card{animation:fadeScaleIn 0.7s cubic-bezier(0.2,0.8,0.2,1) both}
+.votd-text{animation:votdReveal 0.9s 0.2s cubic-bezier(0.2,0.8,0.2,1) both}
+.votd-ref{animation:votdReveal 0.7s 0.45s cubic-bezier(0.2,0.8,0.2,1) both}
+.votd-btn{animation:fadeScaleIn 0.5s 0.65s cubic-bezier(0.2,0.8,0.2,1) both}
+.votd-card::before,.votd-card::after{animation:glowPulse 3s ease-in-out infinite}
+.streak-banner{animation:cardSlideIn 0.5s cubic-bezier(0.2,0.8,0.2,1) both}
+.streak-banner .streak-flame{animation:streakFlame 1.6s ease-in-out infinite;display:inline-block}
+.draft-indicator{animation:draftPulse 2.5s ease-in-out infinite}
+.btn-primary,.btn-secondary,.btn-danger,.btn-edit,.fetch-btn,.votd-btn{position:relative;overflow:hidden}
+.btn-primary::after,.btn-secondary::after,.btn-danger::after,.btn-edit::after{content:'';position:absolute;width:100%;height:100%;top:0;left:0;pointer-events:none;background:radial-gradient(circle,rgba(255,255,255,0.3) 0%,transparent 60%);transform:scale(0);opacity:0;border-radius:inherit;transition:transform 0.5s,opacity 0.5s}
+.btn-primary:active::after,.btn-secondary:active::after,.btn-danger:active::after,.btn-edit:active::after{transform:scale(2.5);opacity:1;transition:0s}
+.btn-primary:active{transform:translateY(1px) scale(0.98)}
+.btn-secondary:active,.btn-danger:active,.btn-edit:active{transform:scale(0.97)}
+input[type="text"]:focus,input[type="search"]:focus,textarea:focus,select:focus{transform:translateY(-1px);transition:border-color 0.25s,box-shadow 0.25s,transform 0.25s}
+.tag-pill{animation:tagAppear 0.25s cubic-bezier(0.34,1.56,0.64,1) both}
+#journalList .glass-card,#generalList .glass-card{animation:cardSlideIn 0.4s cubic-bezier(0.2,0.8,0.2,1) both}
+.list-item{transition:transform 0.25s cubic-bezier(0.2,0.8,0.2,1),box-shadow 0.25s}
+.list-item:active{transform:scale(0.98)}
+.stat-card{animation:statReveal 0.5s cubic-bezier(0.2,0.8,0.2,1) both}
+.stat-card:nth-child(1){animation-delay:0.05s}
+.stat-card:nth-child(2){animation-delay:0.12s}
+.stat-card:nth-child(3){animation-delay:0.19s}
+.stat-card:nth-child(4){animation-delay:0.26s}
+.stat-card .stat-value{animation:countUp 0.6s 0.3s cubic-bezier(0.2,0.8,0.2,1) both}
+.ach-prog-fill,.ach-progress-fill,.time-bar-fill{animation:progressFill 1s cubic-bezier(0.4,0,0.2,1) both}
+.ach-card.unlocked{animation:fadeScaleIn 0.45s cubic-bezier(0.2,0.8,0.2,1) both;transition:transform 0.28s,box-shadow 0.28s}
+.ach-card.unlocked:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 36px rgba(184,144,71,0.18)}
+.ach-card.locked{transition:opacity 0.3s,filter 0.3s}
+.ach-card.locked:hover{opacity:0.8;filter:grayscale(0.5)}
+.ach-icon{transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+.ach-card.unlocked:hover .ach-icon{transform:scale(1.2) rotate(8deg)}
+.ach-popup-content{animation:achUnlock 0.6s cubic-bezier(0.17,0.67,0.42,1.2) both}
+.ach-popup-icon{animation:bounce 2s ease infinite,iconBounce 0.6s 0.2s cubic-bezier(0.2,0.8,0.2,1)}
+.modal-overlay{animation:overlayFadeIn 0.3s ease both;transition:opacity 0.3s}
+.modal-content{animation:modalSlideUp 0.42s cubic-bezier(0.16,1,0.3,1) both}
+.toast{animation:toastSlideIn 0.4s cubic-bezier(0.16,1,0.3,1) both,toastSlideOut 0.4s 3s cubic-bezier(0.4,0,1,1) forwards}
+.chat-fab{animation:fabFloat 3.5s ease-in-out infinite}
+.chat-fab:hover{animation:none;transform:scale(1.12) rotate(12deg);background:var(--pri);color:#fff}
+.chat-fab:active{transform:scale(0.94);animation:none}
+.chat-msg{animation:msgPop 0.3s cubic-bezier(0.2,0.8,0.2,1) both}
+.chat-msg.user{transform-origin:right bottom}
+.chat-msg.ai{transform-origin:left bottom}
+.prayer-checkbox.checked{animation:checkPop 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+.prayer-item .list-title{transition:text-decoration 0.3s,color 0.3s}
+.filter-tag{transition:background 0.25s,color 0.25s,border-color 0.25s,transform 0.2s}
+.filter-tag:active{transform:scale(0.95)}
+.segmented-btn{transition:background 0.3s,color 0.3s,box-shadow 0.3s,transform 0.2s}
+.segmented-btn:active{transform:scale(0.96)}
+.theme-toggle{transition:transform 0.5s cubic-bezier(0.34,1.56,0.64,1),color 0.3s,border-color 0.3s}
+.theme-toggle:active{transform:scale(0.9) rotate(-30deg)}
+.theme-toggle.spinning{animation:spin 0.5s cubic-bezier(0.4,0,0.2,1)}
+.soap-circle{transition:transform 0.28s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.28s}
+.soap-circle:hover{transform:scale(1.1);box-shadow:0 0 16px var(--pri-bg)}
+.cloud-word{transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),opacity 0.2s}
+.cloud-word:hover{transform:scale(1.18) rotate(-2deg)}
+.study-chat{transform-origin:bottom right}
+.heatmap-cell{transition:transform 0.18s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.18s}
+.heatmap-cell:hover{transform:scale(1.5)}
+.time-bar-fill{transition:height 1s cubic-bezier(0.4,0,0.2,1)}
+.img-upload-area{transition:background 0.3s,border-style 0.3s,transform 0.2s}
+.img-upload-area:hover{transform:scale(1.01)}
+.img-upload-area:active{transform:scale(0.99)}
+.prayer-add-btn{transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+.prayer-add-btn:active{transform:scale(0.9) rotate(-20deg)}
+@media(max-width:480px){.study-chat{width:calc(100vw - 32px);right:16px;bottom:calc(120px + env(safe-area-inset-bottom))}.chat-fab{right:16px;bottom:calc(70px + env(safe-area-inset-bottom));width:48px;height:48px;font-size:1.2rem}.app-header{padding:24px 16px 12px}.header-titles h1{font-size:1.8rem}.tab-btn{font-size:0.55rem;letter-spacing:0.1px;padding:5px 8px 3px;min-width:52px}.tab-btn .tab-icon{font-size:1rem}}
 </style>
 </head>
 <body>
@@ -667,7 +435,6 @@ input[type="text"]:focus, input[type="search"]:focus, textarea:focus, select:foc
 </div>
 </section>
 
-<!-- TAB: General Journal -->
 <section id="tab-general" class="tab-panel" role="tabpanel">
     <div class="glass-card entry-form-wrapper">
         <h2 class="serif" style="font-size:2rem;text-align:center;margin-bottom:8px;color:var(--pri)">Diary</h2>
@@ -749,7 +516,6 @@ input[type="text"]:focus, input[type="search"]:focus, textarea:focus, select:foc
 </div>
 </section>
 
-<!-- TAB: Dedicated Chat -->
 <section id="tab-chat" class="tab-panel" role="tabpanel">
     <div class="section-header">
         <h2 class="section-title serif">AI Study Buddy</h2>
@@ -899,7 +665,8 @@ function stripHtml(html){if(!html)return'';const d=document.createElement('div')
 function wc(s){return s?s.trim().split(/\s+/).filter(w=>w.length>0).length:0}
 function eWc(e){let t=0;for(const k of Object.keys(e)){if(typeof e[k]==='string'&&!['id','createdAt','title','reference','image','mode'].includes(k)&&!k.startsWith('tag'))t+=wc(stripHtml(e[k]))}return t}
 function dateStr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function getUniqueDates(entries){const s=new Set();entries.forEach(e=>s.add(dateStr(new Date(e.createdAt))));return Array.from(s).sort()}
+function getDevotionalDate(d){return new Date(d.getTime()-4*60*60*1000)}
+function getUniqueDates(entries){const s=new Set();entries.forEach(e=>s.add(dateStr(getDevotionalDate(new Date(e.createdAt)))));return Array.from(s).sort()}
 function renderContent(text){if(!text)return'';if(/<[a-z][\s\S]*>/i.test(text))return text;return esc(text).replace(/\n/g,'<br>')}
 function readTime(words){return Math.max(1,Math.ceil(words/200))}
 
@@ -914,9 +681,9 @@ function getFavs(){try{return JSON.parse(localStorage.getItem(FAVS_KEY))||[]}cat
 function setFavs(f){try{localStorage.setItem(FAVS_KEY,JSON.stringify(f))}catch(e){}}
 function isFaved(id){return getFavs().includes(id)}
 function toggleFav(id,ev){if(ev)ev.stopPropagation();const favs=getFavs();const idx=favs.indexOf(id);if(idx===-1){favs.push(id);showToast('Added to bookmarks','success')}else{favs.splice(idx,1);showToast('Removed from bookmarks','info')}setFavs(favs);renderJournal()}
-function getCurrentStreak(entries){const dates=getUniqueDates(entries);if(!dates.length)return 0;const today=new Date();today.setHours(0,0,0,0);let check=new Date(today),ts=dateStr(check);if(!dates.includes(ts)){check.setDate(check.getDate()-1);ts=dateStr(check);if(!dates.includes(ts))return 0}let streak=0;while(dates.includes(dateStr(check))){streak++;check.setDate(check.getDate()-1)}return streak}
+function getCurrentStreak(entries){const dates=getUniqueDates(entries);if(!dates.length)return 0;const adjustedNow=getDevotionalDate(new Date());const today=new Date(adjustedNow);today.setHours(0,0,0,0);let check=new Date(today),ts=dateStr(check);if(!dates.includes(ts)){check.setDate(check.getDate()-1);ts=dateStr(check);if(!dates.includes(ts))return 0}let streak=0;while(dates.includes(dateStr(check))){streak++;check.setDate(check.getDate()-1)}return streak}
 function getLongestStreak(entries){const dates=getUniqueDates(entries);if(!dates.length)return 0;let longest=1,current=1;for(let i=1;i<dates.length;i++){const diff=Math.round((new Date(dates[i])-new Date(dates[i-1]))/864e5);if(diff===1){current++;if(current>longest)longest=current}else current=1}return longest}
-function getMonthEntries(entries){const now=new Date(),m=now.getMonth(),y=now.getFullYear();const s=new Set();entries.forEach(e=>{const d=new Date(e.createdAt);if(d.getMonth()===m&&d.getFullYear()===y)s.add(dateStr(d))});return s.size}
+function getMonthEntries(entries){const now=getDevotionalDate(new Date()),m=now.getMonth(),y=now.getFullYear();const s=new Set();entries.forEach(e=>{const d=getDevotionalDate(new Date(e.createdAt));if(d.getMonth()===m&&d.getFullYear()===y)s.add(dateStr(d))});return s.size}
 function getTotalWords(entries){return entries.reduce((t,e)=>t+eWc(e),0)}
 function getStats(e){return{total:e.length,streak:getCurrentStreak(e),longest:getLongestStreak(e),month:getMonthEntries(e),words:getTotalWords(e)}}
 function getAllTags(entries){const tags=new Set();entries.forEach(e=>{if(e.tags&&Array.isArray(e.tags))e.tags.forEach(t=>tags.add(t))});return Array.from(tags).sort()}
@@ -939,7 +706,6 @@ let touchEndY = null;
 const mainContent = document.querySelector('.main-content');
 
 mainContent.addEventListener('touchstart', e => {
-    // Ignore horizontal scrolling areas
     if (e.target.closest('.heatmap-wrapper') || e.target.closest('.tab-nav')) {
         touchStartX = null;
         return;
@@ -956,25 +722,18 @@ mainContent.addEventListener('touchend', e => {
 }, { passive: true });
 
 function handleSwipe() {
-    const swipeThreshold = 50; 
+    const swipeThreshold = 50;
     const diffX = touchStartX - touchEndX;
     const diffY = touchStartY - touchEndY;
-
-    // Check if it's primarily a horizontal swipe
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > swipeThreshold) {
         const currentTabEl = document.querySelector('.tab-panel.active');
         if (!currentTabEl) return;
         const currentTabId = currentTabEl.id.replace('tab-', '');
         const currentIndex = TAB_ORDER.indexOf(currentTabId);
-        
-        if (diffX > 0) { // Swiped left -> Go to Next Tab
-            if (currentIndex < TAB_ORDER.length - 1) {
-                switchTab(TAB_ORDER[currentIndex + 1]);
-            }
-        } else {         // Swiped right -> Go to Previous Tab
-            if (currentIndex > 0) {
-                switchTab(TAB_ORDER[currentIndex - 1]);
-            }
+        if (diffX > 0) {
+            if (currentIndex < TAB_ORDER.length - 1) switchTab(TAB_ORDER[currentIndex + 1]);
+        } else {
+            if (currentIndex > 0) switchTab(TAB_ORDER[currentIndex - 1]);
         }
     }
 }
@@ -985,42 +744,30 @@ function switchTab(tab){
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     const panel = document.getElementById('tab-'+tab);
     panel.classList.add('active');
-
-    // Re-trigger stagger animation on glass cards
     panel.querySelectorAll('.glass-card').forEach((c,i)=>{
         c.style.animation = 'none';
-        c.offsetHeight; // reflow
+        c.offsetHeight;
         c.style.animation = '';
         c.style.animationDelay = (0.04 + i * 0.06) + 's';
     });
-
     const btn=document.querySelector(`.tab-btn[data-tab="${tab}"]`);
-    if(btn) {
+    if(btn){
         btn.classList.add('active');
-        // Re-trigger icon bounce
         const icon = btn.querySelector('.tab-icon');
         if(icon){ icon.style.animation='none'; icon.offsetHeight; icon.style.animation=''; }
-        // Scroll tab into view if partially hidden
         btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
     }
-    
     if(tab==='journal')renderJournal();
     if(tab==='progress')renderProgress();
     if(tab==='achievements')renderAchievements();
     if(tab==='prayers')renderPrayers();
-    if(tab==='chat') {
+    if(tab==='chat'){
         renderChat();
-        setTimeout(()=> {
-            const m = document.getElementById('tabChatMessages');
-            if(m) m.scrollTop = m.scrollHeight;
-        }, 10);
+        setTimeout(()=>{const m=document.getElementById('tabChatMessages');if(m)m.scrollTop=m.scrollHeight},10);
     }
-    if(tab==='general') {
-        const el = document.getElementById('generalDateTime');
-        if(el) {
-            const opts = { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' };
-            el.textContent = new Date().toLocaleDateString('en-US', opts);
-        }
+    if(tab==='general'){
+        const el=document.getElementById('generalDateTime');
+        if(el){const opts={weekday:'long',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'};el.textContent=new Date().toLocaleDateString('en-US',opts)}
     }
 }
 
@@ -1034,7 +781,6 @@ function switchMode(){
     document.getElementById('guideTitle').textContent=g.title;
     document.getElementById('guideBody').innerHTML=g.sections.map(s=>`<div class="soap-icon-wrap"><div class="soap-circle">${s.letter}</div><span class="soap-label">${s.name}</span></div>`).join('');
     const fields=MODE_FIELDS[mode];
-    
     document.getElementById('dynamicFields').innerHTML = fields.map(f => `
     <div class="form-group">
         <label><span class="soap-badge">${f.letter}</span> ${f.label}</label>
@@ -1076,127 +822,79 @@ function useVotd(){const card=document.getElementById('votdCard');document.getEl
 function formatMarkdown(text){if(!text)return'';return text.replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/\*(.*?)\*/g,'<em>$1</em>').replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>')}
 
 // ===== UNIFIED CHAT LOGIC =====
-function getInitialChat() {
-    return [{ role: "model", parts: [{ text: "Fetch a scripture or say hello to begin our study!" }] }];
-}
+function getInitialChat(){return[{role:"model",parts:[{text:"Fetch a scripture or say hello to begin our study!"}]}]}
 
-function renderChat() {
-    const renderMsg = (msg) => {
-        if (msg.role === 'model') {
-            const aiHtml = formatMarkdown(msg.parts[0].text);
-            return `<div class="chat-msg ai"><div class="ai-text">${aiHtml}</div><button class="save-note-btn" onclick="saveToNotes(this)">Save to Notes</button></div>`;
-        } else {
-            return `<div class="chat-msg user">${esc(msg.parts[0].text)}</div>`;
-        }
+function renderChat(){
+    const renderMsg=(msg)=>{
+        if(msg.role==='model'){const aiHtml=formatMarkdown(msg.parts[0].text);return`<div class="chat-msg ai"><div class="ai-text">${aiHtml}</div><button class="save-note-btn" onclick="saveToNotes(this)">Save to Notes</button></div>`}
+        else{return`<div class="chat-msg user">${esc(msg.parts[0].text)}</div>`}
     };
-    
-    let html = '';
-    currentChatHistory.forEach(msg => { if (!msg.hideInUI) html += renderMsg(msg); });
-    
-    const fBox = document.getElementById('chatMessages');
-    const tBox = document.getElementById('tabChatMessages');
-    
-    if(fBox) { fBox.innerHTML = html; fBox.scrollTop = fBox.scrollHeight; }
-    if(tBox) { tBox.innerHTML = html; tBox.scrollTop = tBox.scrollHeight; }
+    let html='';
+    currentChatHistory.forEach(msg=>{if(!msg.hideInUI)html+=renderMsg(msg)});
+    const fBox=document.getElementById('chatMessages');
+    const tBox=document.getElementById('tabChatMessages');
+    if(fBox){fBox.innerHTML=html;fBox.scrollTop=fBox.scrollHeight}
+    if(tBox){tBox.innerHTML=html;tBox.scrollTop=tBox.scrollHeight}
 }
 
-function clearChat() {
-    currentChatHistory = getInitialChat();
-    renderChat();
-    showToast('Conversation cleared', 'info');
-}
+function clearChat(){currentChatHistory=getInitialChat();renderChat();showToast('Conversation cleared','info')}
 
-async function handleSendChat(inputId) {
-    const input = document.getElementById(inputId);
-    const text = input.value.trim();
-    if(!text) return;
-    input.value = '';
-    
-    // Auto-remove default welcome if it's the first message
-    if(currentChatHistory.length === 1 && currentChatHistory[0].parts[0].text.includes("Fetch a scripture")) {
-        currentChatHistory = [];
-    }
-
-    currentChatHistory.push({ role: "user", parts: [{ text }] });
+async function handleSendChat(inputId){
+    const input=document.getElementById(inputId);
+    const text=input.value.trim();
+    if(!text)return;
+    input.value='';
+    if(currentChatHistory.length===1&&currentChatHistory[0].parts[0].text.includes("Fetch a scripture"))currentChatHistory=[];
+    currentChatHistory.push({role:"user",parts:[{text}]});
     renderChat();
-    
-    const btns = [document.getElementById('chatSendBtn'), document.getElementById('tabChatSendBtn')].filter(Boolean);
-    btns.forEach(b => { b.disabled = true; b.innerHTML = '...'; });
-    
-    try {
-        // Strip UI-only flags for the backend
-        const cleanHistory = currentChatHistory.map(({ role, parts }) => ({ role, parts }));
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ history: cleanHistory, message: text })
-        });
-        
-        const data = await response.json();
-        if(!response.ok) throw new Error(data.error);
-        
-        currentChatHistory.push({ role: "model", parts: [{ text: data.text }] });
-        
-        if(document.getElementById('studyChat').style.display === 'none' && !document.getElementById('tab-chat').classList.contains('active')) {
-            document.getElementById('chatBadge').style.display = 'flex';
-        }
+    const btns=[document.getElementById('chatSendBtn'),document.getElementById('tabChatSendBtn')].filter(Boolean);
+    btns.forEach(b=>{b.disabled=true;b.innerHTML='...'});
+    try{
+        const cleanHistory=currentChatHistory.map(({role,parts})=>({role,parts}));
+        const response=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({history:cleanHistory,message:text})});
+        const data=await response.json();
+        if(!response.ok)throw new Error(data.error);
+        currentChatHistory.push({role:"model",parts:[{text:data.text}]});
+        if(document.getElementById('studyChat').style.display==='none'&&!document.getElementById('tab-chat').classList.contains('active'))document.getElementById('chatBadge').style.display='flex';
         renderChat();
-    } catch(e) {
-        showToast('Chat connection failed.', 'error');
-        console.error(e);
-    } finally {
-        btns.forEach(b => { b.disabled = false; b.innerHTML = 'Ask'; });
-    }
+    }catch(e){showToast('Chat connection failed.','error');console.error(e)}
+    finally{btns.forEach(b=>{b.disabled=false;b.innerHTML='Ask'})}
 }
 
 function toggleChat(forceOpen=false){const chat=document.getElementById('studyChat');const badge=document.getElementById('chatBadge');if(forceOpen||chat.style.display==='none'){chat.style.display='flex';badge.style.display='none';setTimeout(()=>document.getElementById('chatInput').focus(),100)}else{chat.style.display='none'}}
 
-async function fetchScripture() {
-    const ref = document.getElementById('entryRef').value.trim();
-    if(!ref) { showToast('Please enter a scripture reference', 'error'); return; }
-    const btn = document.getElementById('fetchBtn');
-    btn.disabled = true; btn.innerHTML = '<span class="spin">⏳</span>...';
-    
-    try {
-        const response = await fetch(`/api/get-scripture?ref=${encodeURIComponent(ref)}`);
-        if(!response.ok) throw new Error("API Error");
-        const data = await response.json();
-        
-        const target = document.getElementById('field_scripture') || document.getElementById('field_highlight') || document.getElementById('field_freewrite');
-        if(target) target.innerHTML = data.text;
-        
-        currentChatHistory = [
-            { role: "user", parts: [{ text: `I am studying ${data.reference}. Text: "${data.text}". Context: "${data.context}".` }], hideInUI: true },
-            { role: "model", parts: [{ text: `Understood! I'm ready to help you study ${data.reference}. What questions do you have?` }] }
+async function fetchScripture(){
+    const ref=document.getElementById('entryRef').value.trim();
+    if(!ref){showToast('Please enter a scripture reference','error');return}
+    const btn=document.getElementById('fetchBtn');
+    btn.disabled=true;btn.innerHTML='<span class="spin">⏳</span>...';
+    try{
+        const response=await fetch(`/api/get-scripture?ref=${encodeURIComponent(ref)}`);
+        if(!response.ok)throw new Error("API Error");
+        const data=await response.json();
+        const target=document.getElementById('field_scripture')||document.getElementById('field_highlight')||document.getElementById('field_freewrite');
+        if(target)target.innerHTML=data.text;
+        currentChatHistory=[
+            {role:"user",parts:[{text:`I am studying ${data.reference}. Text: "${data.text}". Context: "${data.context}".`}],hideInUI:true},
+            {role:"model",parts:[{text:`Understood! I'm ready to help you study ${data.reference}. What questions do you have?`}]}
         ];
-        
-        renderChat();
-        toggleChat(true);
-        document.getElementById('entryRef').value = data.reference;
-        updateWordCount(); showToast('Scripture loaded!', 'success');
-    } catch(error) {
-        showToast('Could not connect to AI', 'error'); console.error(error);
-    } finally {
-        btn.disabled = false; btn.innerHTML = 'Fetch';
-    }
+        renderChat();toggleChat(true);
+        document.getElementById('entryRef').value=data.reference;
+        updateWordCount();showToast('Scripture loaded!','success');
+    }catch(error){showToast('Could not connect to AI','error');console.error(error)}
+    finally{btn.disabled=false;btn.innerHTML='Fetch'}
 }
 
-function saveToNotes(btn) {
-    const textToSave = btn.parentElement.querySelector('.ai-text').innerHTML;
-    let targetEditor = document.getElementById('field_notes');
-    
-    // Adapt depending on which screen user is on
-    if(document.getElementById('tab-general').classList.contains('active')) {
-        targetEditor = document.getElementById('generalBody');
-    } else if(!targetEditor) {
-        targetEditor = document.getElementById('field_freewrite');
-    }
-    
-    if(targetEditor) {
-        const append = `<br><blockquote style="border-left:2px solid var(--pri);padding-left:10px;color:var(--txt2);font-style:italic">${textToSave}</blockquote><br>`;
-        const currentNotes = targetEditor.innerHTML;
-        targetEditor.innerHTML = (currentNotes === '<br>' || currentNotes.trim() === '') ? append : currentNotes + append;
-        showToast('Insight saved to notes!', 'success');
+function saveToNotes(btn){
+    const textToSave=btn.parentElement.querySelector('.ai-text').innerHTML;
+    let targetEditor=document.getElementById('field_notes');
+    if(document.getElementById('tab-general').classList.contains('active'))targetEditor=document.getElementById('generalBody');
+    else if(!targetEditor)targetEditor=document.getElementById('field_freewrite');
+    if(targetEditor){
+        const append=`<br><blockquote style="border-left:2px solid var(--pri);padding-left:10px;color:var(--txt2);font-style:italic">${textToSave}</blockquote><br>`;
+        const currentNotes=targetEditor.innerHTML;
+        targetEditor.innerHTML=(currentNotes==='<br>'||currentNotes.trim()==='')?append:currentNotes+append;
+        showToast('Insight saved to notes!','success');
     }
 }
 
@@ -1207,32 +905,20 @@ function removeImage(){currentImage=null;document.getElementById('imgPreview').s
 // ===== SAVE/EDIT ENTRY =====
 function saveEntry(e){e.preventDefault();const mode=document.getElementById('entryMode').value;const editId=document.getElementById('editingId').value;const entry={id:editId?parseInt(editId):Date.now(),createdAt:new Date().toISOString(),mode,title:document.getElementById('entryTitle').value.trim(),reference:document.getElementById('entryRef').value.trim(),tags:[...currentTags]};if(!entry.title){showToast('Please enter a title','error');return}MODE_FIELDS[mode].forEach(f=>{const el=document.getElementById(f.id);if(el){const content=el.innerHTML||'';entry[f.id.replace('field_','')]=(content==='<br>'?'':content).trim()}});if(currentImage)entry.image=currentImage;const entries=getEntries();if(editId){const idx=entries.findIndex(x=>x.id===parseInt(editId));if(idx!==-1){entry.createdAt=entries[idx].createdAt;entries[idx]=entry}else entries.push(entry)}else{entries.push(entry)}if(!saveEntries(entries))return;resetForm();clearDraft();showToast(editId?'Entry updated!':'Entry saved!','success');checkNewAchievements(entries);renderStreakBanner()}
 
-function saveGeneralEntry(e) {
+function saveGeneralEntry(e){
     e.preventDefault();
-    const title = document.getElementById('generalTitle').value.trim();
-    const bodyEl = document.getElementById('generalBody');
-    const content = bodyEl.innerHTML || '';
-    const freewrite = (content === '<br>' ? '' : content).trim();
-    
-    if(!title) { showToast('Please enter a title', 'error'); return; }
-    
-    const entry = {
-        id: Date.now(),
-        createdAt: new Date().toISOString(),
-        mode: 'general',
-        title: title,
-        reference: '',
-        freewrite: freewrite,
-        tags: []
-    };
-    
-    const entries = getEntries();
+    const title=document.getElementById('generalTitle').value.trim();
+    const bodyEl=document.getElementById('generalBody');
+    const content=bodyEl.innerHTML||'';
+    const freewrite=(content==='<br>'?'':content).trim();
+    if(!title){showToast('Please enter a title','error');return}
+    const entry={id:Date.now(),createdAt:new Date().toISOString(),mode:'general',title:title,reference:'',freewrite:freewrite,tags:[]};
+    const entries=getEntries();
     entries.push(entry);
-    if(!saveEntries(entries)) return;
-    
-    document.getElementById('generalTitle').value = '';
-    bodyEl.innerHTML = '';
-    showToast('Diary entry saved!', 'success');
+    if(!saveEntries(entries))return;
+    document.getElementById('generalTitle').value='';
+    bodyEl.innerHTML='';
+    showToast('Diary entry saved!','success');
     checkNewAchievements(entries);
     renderStreakBanner();
 }
@@ -1303,7 +989,7 @@ function deleteEntry(id){if(!confirm('Delete this entry?'))return;saveEntries(ge
 // ===== PROGRESS =====
 function renderProgress(){const entries=getEntries(),stats=getStats(entries);document.getElementById('statTotal').textContent=stats.total;document.getElementById('statStreak').textContent=stats.streak;document.getElementById('statLongest').textContent=stats.longest;document.getElementById('statMonth').textContent=stats.month;document.getElementById('statWords').textContent=stats.words.toLocaleString();renderHeatmap(entries);renderTimeAnalysis(entries);renderWordClouds(entries);renderRecentActivity(entries)}
 
-function renderHeatmap(entries){const wrapper=document.getElementById('heatmapWrapper');const today=new Date();today.setHours(0,0,0,0);const counts={};entries.forEach(e=>{const ds=dateStr(new Date(e.createdAt));counts[ds]=(counts[ds]||0)+1});const startDate=new Date(today);startDate.setDate(startDate.getDate()-(52*7)+7-startDate.getDay());const dayNames=['','Mon','','Wed','','Fri',''];const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];let monthHtml='<div class="heatmap-label"></div>';let currentMonth=-1;const d=new Date(startDate);for(let w=0;w<52;w++){const weekStart=new Date(d);weekStart.setDate(weekStart.getDate()+w*7);const m=weekStart.getMonth();if(m!==currentMonth){monthHtml+=`<div class="heatmap-month-label" style="grid-column:span 1">${mn[m]}</div>`;currentMonth=m}else{monthHtml+=`<div class="heatmap-month-label"></div>`}}let gridHtml='';for(let row=0;row<7;row++){gridHtml+=`<div class="heatmap-label">${dayNames[row]}</div>`;for(let w=0;w<52;w++){const cellDate=new Date(startDate);cellDate.setDate(cellDate.getDate()+w*7+row);if(cellDate>today){gridHtml+=`<div class="heatmap-cell empty-cell"></div>`;continue}const ds=dateStr(cellDate);const count=counts[ds]||0;const lvl=count===0?'':count===1?'lvl-1':count===2?'lvl-2':'lvl-3';const isToday=dateStr(today)===ds;const dateLabel=cellDate.toLocaleDateString('en-US',{month:'short',day:'numeric'});gridHtml+=`<div class="heatmap-cell ${lvl} ${isToday?'today':''}"><div class="cell-tooltip"><strong>${dateLabel}</strong><br>${count} entr${count===1?'y':'ies'}</div></div>`}}wrapper.innerHTML=`<div class="heatmap-months">${monthHtml}</div><div class="heatmap-grid">${gridHtml}</div>`}
+function renderHeatmap(entries){const wrapper=document.getElementById('heatmapWrapper');const adjustedNow=getDevotionalDate(new Date());const today=new Date(adjustedNow);today.setHours(0,0,0,0);const counts={};entries.forEach(e=>{const ds=dateStr(getDevotionalDate(new Date(e.createdAt)));counts[ds]=(counts[ds]||0)+1});const startDate=new Date(today);startDate.setDate(startDate.getDate()-(52*7)+7-startDate.getDay());const dayNames=['','Mon','','Wed','','Fri',''];const mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];let monthHtml='<div class="heatmap-label"></div>';let currentMonth=-1;const d=new Date(startDate);for(let w=0;w<52;w++){const weekStart=new Date(d);weekStart.setDate(weekStart.getDate()+w*7);const m=weekStart.getMonth();if(m!==currentMonth){monthHtml+=`<div class="heatmap-month-label" style="grid-column:span 1">${mn[m]}</div>`;currentMonth=m}else{monthHtml+=`<div class="heatmap-month-label"></div>`}}let gridHtml='';for(let row=0;row<7;row++){gridHtml+=`<div class="heatmap-label">${dayNames[row]}</div>`;for(let w=0;w<52;w++){const cellDate=new Date(startDate);cellDate.setDate(cellDate.getDate()+w*7+row);if(cellDate>today){gridHtml+=`<div class="heatmap-cell empty-cell"></div>`;continue}const ds=dateStr(cellDate);const count=counts[ds]||0;const lvl=count===0?'':count===1?'lvl-1':count===2?'lvl-2':'lvl-3';const isToday=dateStr(today)===ds;const dateLabel=cellDate.toLocaleDateString('en-US',{month:'short',day:'numeric'});gridHtml+=`<div class="heatmap-cell ${lvl} ${isToday?'today':''}"><div class="cell-tooltip"><strong>${dateLabel}</strong><br>${count} entr${count===1?'y':'ies'}</div></div>`}}wrapper.innerHTML=`<div class="heatmap-months">${monthHtml}</div><div class="heatmap-grid">${gridHtml}</div>`}
 
 function renderTimeAnalysis(entries){const bars=document.getElementById('timeBars'),insight=document.getElementById('timeInsight');if(!entries.length){bars.innerHTML='<div style="text-align:center;color:var(--txt3);width:100%;padding:20px">No data yet</div>';insight.innerHTML='';return}const periods=[{label:'12-4a',range:[0,3]},{label:'4-6a',range:[4,5]},{label:'6-8a',range:[6,7]},{label:'8-10a',range:[8,9]},{label:'10-12p',range:[10,11]},{label:'12-2p',range:[12,13]},{label:'2-5p',range:[14,16]},{label:'5-8p',range:[17,19]},{label:'8-10p',range:[20,21]},{label:'10-12a',range:[22,23]}];const periodCounts=periods.map(p=>({...p,count:entries.filter(e=>{const h=new Date(e.createdAt).getHours();return h>=p.range[0]&&h<=p.range[1]}).length}));const maxCount=Math.max(...periodCounts.map(p=>p.count),1);const maxPeriod=periodCounts.reduce((a,b)=>b.count>a.count?b:a);const pct=entries.length>0?Math.round((maxPeriod.count/entries.length)*100):0;bars.innerHTML=periodCounts.map(p=>{const h=p.count>0?Math.max(10,(p.count/maxCount)*100):0;return`<div class="time-bar-wrap ${p.count>0?'active':''}"><div class="time-bar-val">${p.count||''}</div><div class="time-bar-track"><div class="time-bar-fill" style="height:${h}%"></div></div><div class="time-bar-label">${p.label}</div></div>`}).join('');insight.innerHTML=entries.length>=3?`Most consistent during <strong>${maxPeriod.label}</strong> (${pct}%)`:'Complete more entries to see patterns.'}
 
@@ -1317,8 +1003,7 @@ function renderRecentActivity(entries){const list=document.getElementById('activ
 // ===== PRAYERS =====
 let prayerFilter='all';
 function addPrayer(){const input=document.getElementById('prayerInput'),text=input.value.trim();if(!text){showToast('Please enter a prayer request','error');return}const prayers=getPrayers();prayers.push({id:Date.now(),text,createdAt:new Date().toISOString(),answered:false,answeredAt:null});if(!savePrayers(prayers))return;input.value='';renderPrayers();checkNewAchievements(getEntries());showToast('Prayer added','success')}
-function togglePrayer(id){const prayers=getPrayers(),p=prayers.find(x=>x.id===id);if(!p)return;p.answered=!p.answered;p.answeredAt=p.answered?new Date().toISOString():null;savePrayers(prayers);renderPrayers();if(p.answered){showToast('Prayer answered! ✨','success');// Re-trigger checkPop on the newly-rendered checkbox
-setTimeout(()=>{const cb=document.querySelector(`.prayer-checkbox.checked`);if(cb){cb.style.animation='none';cb.offsetHeight;cb.style.animation='';}},10);}checkNewAchievements(getEntries())}
+function togglePrayer(id){const prayers=getPrayers(),p=prayers.find(x=>x.id===id);if(!p)return;p.answered=!p.answered;p.answeredAt=p.answered?new Date().toISOString():null;savePrayers(prayers);renderPrayers();if(p.answered){showToast('Prayer answered! ✨','success');setTimeout(()=>{const cb=document.querySelector('.prayer-checkbox.checked');if(cb){cb.style.animation='none';cb.offsetHeight;cb.style.animation=''}},10)}checkNewAchievements(getEntries())}
 function deletePrayer(id){if(!confirm('Delete this prayer?'))return;savePrayers(getPrayers().filter(p=>p.id!==id));renderPrayers();showToast('Prayer removed','info')}
 function setPrayerFilter(filter,btn){prayerFilter=filter;document.querySelectorAll('.prayer-filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderPrayers()}
 function renderPrayers(){const prayers=getPrayers();document.getElementById('prayerTotal').textContent=prayers.length;document.getElementById('prayerActive').textContent=prayers.filter(p=>!p.answered).length;document.getElementById('prayerAnswered').textContent=prayers.filter(p=>p.answered).length;let filtered=prayers;if(prayerFilter==='active')filtered=prayers.filter(p=>!p.answered);if(prayerFilter==='answered')filtered=prayers.filter(p=>p.answered);filtered.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));const list=document.getElementById('prayerList'),empty=document.getElementById('emptyPrayers');if(!filtered.length){list.innerHTML='';empty.style.display='block';return}empty.style.display='none';
@@ -1347,7 +1032,7 @@ const ACHIEVEMENTS=[
 {id:'night_watch',title:'Night Watch',desc:'Devotional after 10 PM',icon:'🌙',cat:'special',check:(e)=>e.some(x=>new Date(x.createdAt).getHours()>=22),prog:(e)=>({c:e.some(x=>new Date(x.createdAt).getHours()>=22)?1:0,t:1})},
 {id:'deep_thinker',title:'Deep Thinker',desc:'300+ word entry',icon:'🧠',cat:'special',check:(e)=>e.some(x=>eWc(x)>=300),prog:(e)=>({c:Math.min(Math.max(0,...e.map(x=>eWc(x)),0),300),t:300})},
 {id:'prolific_pen',title:'Prolific Pen',desc:'500+ word entry',icon:'🖊',cat:'special',check:(e)=>e.some(x=>eWc(x)>=500),prog:(e)=>({c:Math.min(Math.max(0,...e.map(x=>eWc(x)),0),500),t:500})},
-{id:'sabbath_keeper',title:'Sabbath Keeper',desc:'4 Sunday devotionals',icon:'⛪',cat:'special',check:(e)=>{const s=new Set();e.forEach(x=>{const d=new Date(x.createdAt);if(d.getDay()===0)s.add(dateStr(d))});return s.size>=4},prog:(e)=>{const s=new Set();e.forEach(x=>{const d=new Date(x.createdAt);if(d.getDay()===0)s.add(dateStr(d))});return{c:Math.min(s.size,4),t:4}}},
+{id:'sabbath_keeper',title:'Sabbath Keeper',desc:'4 Sunday devotionals',icon:'⛪',cat:'special',check:(e)=>{const s=new Set();e.forEach(x=>{const d=getDevotionalDate(new Date(x.createdAt));if(d.getDay()===0)s.add(dateStr(d))});return s.size>=4},prog:(e)=>{const s=new Set();e.forEach(x=>{const d=getDevotionalDate(new Date(x.createdAt));if(d.getDay()===0)s.add(dateStr(d))});return{c:Math.min(s.size,4),t:4}}},
 {id:'full_house',title:'Full House',desc:'Fill every field of an entry',icon:'🏠',cat:'special',check:(e)=>e.some(x=>{const m=x.mode||'soap';const reqFields=MODE_FIELDS[m]?.map(f=>f.id.replace('field_',''))||[];return x.title?.trim()&&x.reference?.trim()&&reqFields.every(k=>stripHtml(x[k]||'')?.trim())}),prog:(e)=>({c:e.some(x=>x.title?.trim()&&x.reference?.trim())?1:0,t:1})},
 {id:'hear_me',title:'Hear Me Out',desc:'Use H.E.A.R. method',icon:'👂',cat:'special',check:(e)=>e.some(x=>x.mode==='hear'),prog:(e)=>({c:e.filter(x=>x.mode==='hear').length>0?1:0,t:1})},
 {id:'free_spirit',title:'Free Spirit',desc:'Use Free Write mode',icon:'🕊',cat:'special',check:(e)=>e.some(x=>x.mode==='free'),prog:(e)=>({c:e.filter(x=>x.mode==='free').length>0?1:0,t:1})},
@@ -1372,173 +1057,86 @@ function exportData(){const data={version:4,exportedAt:new Date().toISOString(),
 function importData(e){const file=e.target.files[0];if(!file)return;if(!confirm('This will replace ALL your current data. Continue?')){e.target.value='';return}const reader=new FileReader();reader.onload=function(ev){try{const data=JSON.parse(ev.target.result);if(!data||typeof data!=='object')throw new Error();if(data.entries&&Array.isArray(data.entries)){if(!saveEntries(data.entries)){e.target.value='';return}}if(data.prayers&&Array.isArray(data.prayers))savePrayers(data.prayers);if(data.achievements&&Array.isArray(data.achievements))setSeenAch(data.achievements);if(data.favorites&&Array.isArray(data.favorites))setFavs(data.favorites);if(data.theme)localStorage.setItem(THEME_KEY,data.theme);loadTheme();renderJournal();renderProgress();renderAchievements();renderPrayers();renderStreakBanner();showToast('Import successful!','success')}catch(err){showToast('Invalid backup file.','error')}e.target.value=''};reader.readAsText(file)}
 
 function mergeData(e){
-    const file = e.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev){
-        try {
-            const data = JSON.parse(ev.target.result);
-            if(!data || typeof data !== 'object') throw new Error();
-            
-            let newEntriesCount = 0;
-            let newPrayersCount = 0;
-
-            if(data.entries && Array.isArray(data.entries)){
-                let localEntries = getEntries();
-                data.entries.forEach(imp => {
-                    const isDup = localEntries.some(loc => loc.id === imp.id || (loc.createdAt === imp.createdAt && loc.title === imp.title));
-                    if(!isDup){
-                        let newId = imp.id;
-                        while(localEntries.some(loc => loc.id === newId)) newId++;
-                        if(newId !== imp.id && data.favorites) {
-                            const favIdx = data.favorites.indexOf(imp.id);
-                            if(favIdx !== -1) data.favorites[favIdx] = newId;
-                        }
-                        imp.id = newId;
-                        localEntries.push(imp);
-                        newEntriesCount++;
-                    }
+    const file=e.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(ev){
+        try{
+            const data=JSON.parse(ev.target.result);
+            if(!data||typeof data!=='object')throw new Error();
+            let newEntriesCount=0,newPrayersCount=0;
+            if(data.entries&&Array.isArray(data.entries)){
+                let localEntries=getEntries();
+                data.entries.forEach(imp=>{
+                    const isDup=localEntries.some(loc=>loc.id===imp.id||(loc.createdAt===imp.createdAt&&loc.title===imp.title));
+                    if(!isDup){let newId=imp.id;while(localEntries.some(loc=>loc.id===newId))newId++;if(newId!==imp.id&&data.favorites){const favIdx=data.favorites.indexOf(imp.id);if(favIdx!==-1)data.favorites[favIdx]=newId}imp.id=newId;localEntries.push(imp);newEntriesCount++}
                 });
-                if(!saveEntries(localEntries)) { e.target.value=''; return; }
+                if(!saveEntries(localEntries)){e.target.value='';return}
             }
-
-            if(data.prayers && Array.isArray(data.prayers)){
-                let localPrayers = getPrayers();
-                data.prayers.forEach(imp => {
-                    const isDup = localPrayers.some(loc => loc.id === imp.id || (loc.createdAt === imp.createdAt && loc.text === imp.text));
-                    if(!isDup){
-                        let newId = imp.id;
-                        while(localPrayers.some(loc => loc.id === newId)) newId++;
-                        imp.id = newId;
-                        localPrayers.push(imp);
-                        newPrayersCount++;
-                    }
-                });
+            if(data.prayers&&Array.isArray(data.prayers)){
+                let localPrayers=getPrayers();
+                data.prayers.forEach(imp=>{const isDup=localPrayers.some(loc=>loc.id===imp.id||(loc.createdAt===imp.createdAt&&loc.text===imp.text));if(!isDup){let newId=imp.id;while(localPrayers.some(loc=>loc.id===newId))newId++;imp.id=newId;localPrayers.push(imp);newPrayersCount++}});
                 savePrayers(localPrayers);
             }
-
-            if(data.achievements && Array.isArray(data.achievements)){
-                let localAch = getSeenAch();
-                setSeenAch([...new Set([...localAch, ...data.achievements])]);
-            }
-
-            if(data.favorites && Array.isArray(data.favorites)){
-                let localFavs = getFavs();
-                let localEntries = getEntries();
-                let mergedFavs = [...new Set([...localFavs, ...data.favorites])];
-                mergedFavs = mergedFavs.filter(favId => localEntries.some(x => x.id === favId));
-                setFavs(mergedFavs);
-            }
-
-            renderJournal();
-            renderProgress();
-            renderAchievements();
-            renderPrayers();
-            renderStreakBanner();
-            showToast(`Merged! Added ${newEntriesCount} entries & ${newPrayersCount} prayers.`, 'success');
-        } catch(err){
-            showToast('Invalid data file.', 'error');
-        }
-        e.target.value = '';
+            if(data.achievements&&Array.isArray(data.achievements)){let localAch=getSeenAch();setSeenAch([...new Set([...localAch,...data.achievements])])}
+            if(data.favorites&&Array.isArray(data.favorites)){let localFavs=getFavs();let localEntries=getEntries();let mergedFavs=[...new Set([...localFavs,...data.favorites])];mergedFavs=mergedFavs.filter(favId=>localEntries.some(x=>x.id===favId));setFavs(mergedFavs)}
+            renderJournal();renderProgress();renderAchievements();renderPrayers();renderStreakBanner();
+            showToast(`Merged! Added ${newEntriesCount} entries & ${newPrayersCount} prayers.`,'success');
+        }catch(err){showToast('Invalid data file.','error')}
+        e.target.value='';
     };
     reader.readAsText(file);
 }
 
 function clearAllData(){if(!confirm('Permanently delete ALL data? This cannot be undone.'))return;localStorage.removeItem(ENTRIES_KEY);localStorage.removeItem(PRAYER_KEY);localStorage.removeItem(ACH_KEY);localStorage.removeItem(DRAFT_KEY);localStorage.removeItem(FAVS_KEY);renderJournal();renderProgress();renderAchievements();renderPrayers();renderStreakBanner();showToast('All data cleared.','info')}
 
-// ===== VOICE TRANSCRIPTION (GEMINI) =====
+// ===== VOICE TRANSCRIPTION =====
 let mediaRecorder;
-let audioChunks = [];
-let isRecording = false;
+let audioChunks=[];
+let isRecording=false;
 
-async function toggleRecording(btn, targetId) {
-    const targetEditor = document.getElementById(targetId);
-
-    if (isRecording) {
-        mediaRecorder.stop();
-        isRecording = false;
-        btn.textContent = '⏳';
-        btn.style.animation = 'spin 1s linear infinite';
-        showToast('Processing audio...', 'info');
-        return;
-    }
-
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-        audioChunks = [];
-
-        mediaRecorder.ondataavailable = event => {
-            if (event.data.size > 0) audioChunks.push(event.data);
-        };
-
-        mediaRecorder.onstop = async () => {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            const reader = new FileReader();
+async function toggleRecording(btn,targetId){
+    const targetEditor=document.getElementById(targetId);
+    if(isRecording){mediaRecorder.stop();isRecording=false;btn.textContent='⏳';btn.style.animation='spin 1s linear infinite';showToast('Processing audio...','info');return}
+    try{
+        const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+        mediaRecorder=new MediaRecorder(stream,{mimeType:'audio/webm'});
+        audioChunks=[];
+        mediaRecorder.ondataavailable=event=>{if(event.data.size>0)audioChunks.push(event.data)};
+        mediaRecorder.onstop=async()=>{
+            const audioBlob=new Blob(audioChunks,{type:'audio/webm'});
+            const reader=new FileReader();
             reader.readAsDataURL(audioBlob);
-            reader.onloadend = async () => {
-                const base64Audio = reader.result.split(',')[1];
-                try {
-                    const response = await fetch('/api/transcribe', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ audio: base64Audio, mimeType: 'audio/webm' })
-                    });
-                    if (!response.ok) throw new Error('Transcription failed');
-                    const data = await response.json();
-                    
-                    const currentHtml = targetEditor.innerHTML;
-                    const spacer = (currentHtml === '' || currentHtml === '<br>') ? '' : '&nbsp;';
-                    targetEditor.innerHTML = currentHtml + spacer + data.text;
-                    
-                    updateWordCount();
-                    showToast('Transcription added!', 'success');
-                } catch (error) {
-                    console.error('Transcription API Error:', error);
-                    showToast('Failed to transcribe audio.', 'error');
-                } finally {
-                    btn.textContent = '🎙️';
-                    btn.style.animation = '';
-                    btn.style.color = 'var(--pri)';
-                    btn.style.backgroundColor = 'transparent';
-                }
+            reader.onloadend=async()=>{
+                const base64Audio=reader.result.split(',')[1];
+                try{
+                    const response=await fetch('/api/transcribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({audio:base64Audio,mimeType:'audio/webm'})});
+                    if(!response.ok)throw new Error('Transcription failed');
+                    const data=await response.json();
+                    const currentHtml=targetEditor.innerHTML;
+                    const spacer=(currentHtml===''||currentHtml==='<br>')?'':'&nbsp;';
+                    targetEditor.innerHTML=currentHtml+spacer+data.text;
+                    updateWordCount();showToast('Transcription added!','success');
+                }catch(error){console.error('Transcription API Error:',error);showToast('Failed to transcribe audio.','error')}
+                finally{btn.textContent='🎙️';btn.style.animation='';btn.style.color='var(--pri)';btn.style.backgroundColor='transparent'}
             };
-            stream.getTracks().forEach(track => track.stop());
+            stream.getTracks().forEach(track=>track.stop());
         };
-
-        mediaRecorder.start();
-        isRecording = true;
-        btn.textContent = '⏹️';
-        btn.style.color = 'white';
-        btn.style.backgroundColor = 'var(--danger)';
-        btn.style.borderRadius = '50%';
-        
-    } catch (err) {
-        console.error("Microphone access denied:", err);
-        showToast('Microphone access is required.', 'error');
-    }
+        mediaRecorder.start();isRecording=true;btn.textContent='⏹️';btn.style.color='white';btn.style.backgroundColor='var(--danger)';btn.style.borderRadius='50%';
+    }catch(err){console.error("Microphone access denied:",err);showToast('Microphone access is required.','error')}
 }
 
 // ===== NAV TOGGLE =====
-function initNavToggle() {
-    const nav = document.getElementById('tabNav') || document.querySelector('.tab-nav');
-    const pullTab = document.getElementById('navPullTab');
-    if (!nav) return;
-
-    // After the entrance animation finishes, clear it so CSS transitions can take over
-    nav.addEventListener('animationend', () => {
-        nav.style.animation = 'none';
-    }, { once: true });
-
-    const EDGE_ZONE = 30; // px from bottom of screen
-
-    document.addEventListener('touchstart', (e) => {
-        const touchY = e.touches[0].clientY;
-        if (touchY > window.innerHeight - EDGE_ZONE) {
-            nav.classList.toggle('nav-hidden');
-            if (pullTab) pullTab.classList.toggle('visible', nav.classList.contains('nav-hidden'));
-        }
-    }, { passive: true });
+function initNavToggle(){
+    const nav=document.getElementById('tabNav')||document.querySelector('.tab-nav');
+    const pullTab=document.getElementById('navPullTab');
+    if(!nav)return;
+    nav.addEventListener('animationend',()=>{nav.style.animation='none'},{once:true});
+    const EDGE_ZONE=30;
+    document.addEventListener('touchstart',(e)=>{
+        const touchY=e.touches[0].clientY;
+        if(touchY>window.innerHeight-EDGE_ZONE){nav.classList.toggle('nav-hidden');if(pullTab)pullTab.classList.toggle('visible',nav.classList.contains('nav-hidden'))}
+    },{passive:true});
 }
 
 // ===== INIT =====
@@ -1550,12 +1148,7 @@ function initNavToggle() {
     startDraftTimer();
     renderStreakBanner();
     initNavToggle();
-    
-    if(currentChatHistory.length === 0) {
-        currentChatHistory = getInitialChat();
-        renderChat();
-    }
-    
+    if(currentChatHistory.length===0){currentChatHistory=getInitialChat();renderChat()}
     const entries=getEntries(),stats=getStats(entries),seen=getSeenAch();
     ACHIEVEMENTS.forEach(a=>{if(a.check(entries,stats)&&!seen.includes(a.id))seen.push(a.id)});
     setSeenAch(seen);
