@@ -670,6 +670,12 @@ function getUniqueDates(entries){const s=new Set();entries.forEach(e=>s.add(date
 function renderContent(text){if(!text)return'';if(/<[a-z][\s\S]*>/i.test(text))return text;return esc(text).replace(/\n/g,'<br>')}
 function readTime(words){return Math.max(1,Math.ceil(words/200))}
 
+// ===== STREAK LOGIC =====
+function calculateStreakWithCounts(counts, todayDate){let check=new Date(todayDate);let streak=0;let todayStr=dateStr(todayDate);while(true){let ts=dateStr(check);let count=counts[ts]||0;if(count>0){streak++;}else{if(ts!==todayStr){let nextDay=new Date(check);nextDay.setDate(nextDay.getDate()+1);let nextCount=counts[dateStr(nextDay)]||0;if(nextCount>=2){streak++;}else{break;}}}check.setDate(check.getDate()-1);}return streak;}
+function getStreakData(entries){if(!entries||!entries.length)return{current:0,atRisk:false,req:0,potential:0};const counts={};entries.forEach(e=>{const ds=dateStr(getDevotionalDate(new Date(e.createdAt)));counts[ds]=(counts[ds]||0)+1;});const today=new Date(getDevotionalDate(new Date()));today.setHours(0,0,0,0);let todayStr=dateStr(today);let currentStreak=calculateStreakWithCounts(counts,today);let simCounts={...counts};simCounts[todayStr]=Math.max(2,counts[todayStr]||0);let maxPotential=calculateStreakWithCounts(simCounts,today);let yesterday=new Date(today);yesterday.setDate(yesterday.getDate()-1);let atRisk=false,req=0;if(maxPotential>currentStreak&&maxPotential>=3&&(counts[dateStr(yesterday)]||0)===0){atRisk=true;req=2-(counts[todayStr]||0);}return{current:currentStreak,atRisk,req,potential:maxPotential};}
+function getCurrentStreak(entries){return getStreakData(entries).current;}
+function getLongestStreak(entries){if(!entries||!entries.length)return 0;const counts={};entries.forEach(e=>{const ds=dateStr(getDevotionalDate(new Date(e.createdAt)));counts[ds]=(counts[ds]||0)+1;});const dates=Object.keys(counts).sort((a,b)=>new Date(a)-new Date(b));if(!dates.length)return 0;let longest=0,current=0,check=new Date(dates[0]),end=new Date(dates[dates.length-1]);while(check<=end){let ts=dateStr(check);let count=counts[ts]||0;if(count>0){current++;}else{let nextDay=new Date(check);nextDay.setDate(nextDay.getDate()+1);let nextCount=counts[dateStr(nextDay)]||0;if(nextCount>=2){current++;}else{current=0;}}if(current>longest)longest=current;check.setDate(check.getDate()+1);}return longest;}
+
 // ===== DATA HELPERS =====
 function getEntries(){try{return JSON.parse(localStorage.getItem(ENTRIES_KEY))||[]}catch(e){return[]}}
 function saveEntries(e){try{localStorage.setItem(ENTRIES_KEY,JSON.stringify(e));return true}catch(err){showToast('Storage quota exceeded!','error');return false}}
@@ -681,8 +687,6 @@ function getFavs(){try{return JSON.parse(localStorage.getItem(FAVS_KEY))||[]}cat
 function setFavs(f){try{localStorage.setItem(FAVS_KEY,JSON.stringify(f))}catch(e){}}
 function isFaved(id){return getFavs().includes(id)}
 function toggleFav(id,ev){if(ev)ev.stopPropagation();const favs=getFavs();const idx=favs.indexOf(id);if(idx===-1){favs.push(id);showToast('Added to bookmarks','success')}else{favs.splice(idx,1);showToast('Removed from bookmarks','info')}setFavs(favs);renderJournal()}
-function getCurrentStreak(entries){const dates=getUniqueDates(entries);if(!dates.length)return 0;const adjustedNow=getDevotionalDate(new Date());const today=new Date(adjustedNow);today.setHours(0,0,0,0);let check=new Date(today),ts=dateStr(check);if(!dates.includes(ts)){check.setDate(check.getDate()-1);ts=dateStr(check);if(!dates.includes(ts))return 0}let streak=0;while(dates.includes(dateStr(check))){streak++;check.setDate(check.getDate()-1)}return streak}
-function getLongestStreak(entries){const dates=getUniqueDates(entries);if(!dates.length)return 0;let longest=1,current=1;for(let i=1;i<dates.length;i++){const diff=Math.round((new Date(dates[i])-new Date(dates[i-1]))/864e5);if(diff===1){current++;if(current>longest)longest=current}else current=1}return longest}
 function getMonthEntries(entries){const now=getDevotionalDate(new Date()),m=now.getMonth(),y=now.getFullYear();const s=new Set();entries.forEach(e=>{const d=getDevotionalDate(new Date(e.createdAt));if(d.getMonth()===m&&d.getFullYear()===y)s.add(dateStr(d))});return s.size}
 function getTotalWords(entries){return entries.reduce((t,e)=>t+eWc(e),0)}
 function getStats(e){return{total:e.length,streak:getCurrentStreak(e),longest:getLongestStreak(e),month:getMonthEntries(e),words:getTotalWords(e)}}
@@ -771,8 +775,21 @@ function switchTab(tab){
     }
 }
 
-// ===== STREAK =====
-function renderStreakBanner(){const entries=getEntries();const streak=getCurrentStreak(entries);const banner=document.getElementById('streakBanner');if(streak<2){banner.innerHTML='';return}const messages=['','','Keep going!','Building a habit!','Consistency is key!','Almost a week!','Incredible!','One full week!'];const msg=streak>=7?`${streak} days strong!`:messages[Math.min(streak,7)];banner.innerHTML=`<div class="glass-card streak-banner ${streak>=7?'fire':''}"><div class="streak-flame">${streak>=7?'🔥':'✨'}</div><div class="streak-info"><strong>${streak}-Day Streak!</strong><p>${msg}</p></div><button class="streak-dismiss" onclick="this.parentElement.remove()">✕</button></div>`}
+// ===== STREAK BANNER =====
+function renderStreakBanner(){
+    const entries=getEntries();
+    const data=getStreakData(entries);
+    const banner=document.getElementById('streakBanner');
+    if(data.atRisk){
+        banner.innerHTML=`<div class="glass-card streak-banner" style="border-color:var(--danger)"><div class="streak-flame" style="animation:none;font-size:2rem">⚠️</div><div class="streak-info"><strong style="color:var(--danger)">Streak at Risk!</strong><p style="color:var(--txt)">Complete ${data.req} more entr${data.req>1?'ies':'y'} today to revive your ${data.potential}-day streak!</p></div><button class="streak-dismiss" onclick="this.parentElement.remove()">✕</button></div>`;
+        return;
+    }
+    const streak=data.current;
+    if(streak<2){banner.innerHTML='';return}
+    const messages=['','','Keep going!','Building a habit!','Consistency is key!','Almost a week!','Incredible!','One full week!'];
+    const msg=streak>=7?`${streak} days strong!`:messages[Math.min(streak,7)];
+    banner.innerHTML=`<div class="glass-card streak-banner ${streak>=7?'fire':''}"><div class="streak-flame">${streak>=7?'🔥':'✨'}</div><div class="streak-info"><strong>${streak}-Day Streak!</strong><p>${msg}</p></div><button class="streak-dismiss" onclick="this.parentElement.remove()">✕</button></div>`;
+}
 
 // ===== MODE =====
 function switchMode(){
